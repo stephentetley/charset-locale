@@ -45,6 +45,8 @@ instance Hash[Locale] {
 
 mod Locale {
 
+    use Locale.LanguageRange
+    use Locale.LanguageRange.{LanguageRange}
     use LocaleCategory.{Display, Format}
     use IsoCountryCode.{Part1_Alpha2, Part1_Alpha3, Part3}
     use FilteringMode.{AutoselectFiltering, ExtendedFiltering, IgnoreExtendedRanges, MapExtendedRanges, RejectExtendedRanges}
@@ -419,64 +421,69 @@ mod Locale {
         import java.util.Locale.getUnicodeLocaleKeys(): ##java.util.Set \ {};
         let Locale(x1) = x;
         getUnicodeLocaleKeys(x1) |> Adaptor.fromSet
-/*
-    pub def lookup(priorityList: List[LanguageRange], locales: List[Locale]): Result[String, Option[Locale]] =
+
+    pub def lookup(priorityList: List[LanguageRange], locales: List[Locale]): Result[String, Option[Locale]] \ IO =
         Result.tryCatch(_ -> {
             import static java.util.Locale.lookup(##java.util.List, ##java.util.Collection): ##java.util.Locale \ {};
-            let ls  = List.map(language priorityList) |> Interop.Util.ListZ.fromFoldableViaArrayListHH(priorityList);
-            let col = Interop.Util.Collection.fromFoldableViaArrayListHH(locales);
-            lookup(ls, col) |> Object.toOption |> Option.map(Locale)
+            let ps1 = List.map(w -> {let LanguageRange(w1) = w; w1}, priorityList) |> Adaptor.toList;
+            let locs1 = List.map(w -> {let Locale(w1) = w; w1}, locales) |> Adaptor.toList;
+            lookup(ps1, unchecked_cast(locs1 as ##java.util.Collection)) |> Object.toOption |> Option.map(Locale)
         })
 
 
-
-    pub def lookupTag(priorityList: List[LanguageRange], tags: List[String]): Result[String, Option[String]] =
+    pub def lookupTag(priorityList: List[LanguageRange], tags: List[String]): Result[String, Option[String]] \ IO =
         Result.tryCatch(_ -> {
             import static java.util.Locale.lookupTag(##java.util.List, ##java.util.Collection): String \ {};
-            let ls      = Interop.Util.ListZ.fromFoldableViaArrayListHH(priorityList);
-            let col     = Interop.Util.Collection.fromFoldableViaArrayListHH(tags);
-            lookupTag(ls, col) |> Object.toOption
+            let ps1 = List.map(w -> {let LanguageRange(w1) = w; w1}, priorityList) |> Adaptor.toList;
+            let tags1 = Adaptor.toList(tags);
+            lookupTag(ps1, unchecked_cast(tags1 as ##java.util.Collection)) |> Object.toOption
         })
 
 
-    pub def filter(priorityList: List[LanguageRange], locales: List[Locale]): Result[String, List[Locale]] =         
-        Result.tryCatch(_ -> region rc {
+    pub def filter(priorityList: List[LanguageRange], locales: List[Locale]): Result[String, List[Locale]] \ IO =
+        Result.tryCatch(_ -> {
             import static java.util.Locale.filter(##java.util.List, ##java.util.Collection): ##java.util.List \ {};
-            let ls      = Interop.Util.ListZ.fromFoldableViaArrayListHH(priorityList);
-            let col     = Interop.Util.Collection.fromFoldableViaArrayListHH(locales);
-            filter(ls, col) |> Interop.Util.ListZ.wrapHH(rc) |> Interop.Util.ListZ.toFlixList(fromJavaObject)
+            let ps1 = List.map(w -> {let LanguageRange(w1) = w; w1}, priorityList) |> Adaptor.toList;
+            let locs1 = List.map(w -> {let Locale(w1) = w; w1}, locales) |> Adaptor.toList;
+            filter(ps1, unchecked_cast(locs1 as ##java.util.Collection)) 
+                |> Adaptor.fromList 
+                |> List.map(o -> Locale(o))
         })
+
 
 
     pub def filterWithFilteringMode(priorityList: List[LanguageRange], 
-                                    mode: LocaleFilteringMode, 
-                                    locales: List[Locale]): Result[String, List[Locale]] = 
-        Result.tryCatch(_ -> region rc {
+                                    mode: FilteringMode, 
+                                    locales: List[Locale]): Result[String, List[Locale]] \ IO = 
+        Result.tryCatch(_ ->  {
             import static java.util.Locale.filter(##java.util.List, ##java.util.Collection, ##java.util.Locale$FilteringMode): ##java.util.List \ {};
-            let ps      = Interop.Util.ListZ.fromFoldableViaArrayListHH(priorityList);
-            let col     = Interop.Util.Collection.fromFoldableViaArrayListHH(locales);
-            let LocaleFilteringMode(mode1) = mode;
-            filter(ps, col, mode1) |> Interop.Util.ListZ.wrapHH(rc) |> Interop.Util.ListZ.toFlixList(fromJavaObject)
+            let ps1 = List.map(w -> {let LanguageRange(w1) = w; w1}, priorityList) |> Adaptor.toList;
+            let locs1 = List.map(w -> {let Locale(w1) = w; w1}, locales) |> Adaptor.toList;
+            let mode1 = filteringModeToJava(mode);
+            filter(ps1, unchecked_cast(locs1 as ##java.util.Collection), mode1) 
+                |> Adaptor.fromList 
+                |> List.map(o -> Locale(o))
         })
 
-    pub def filterTags(priorityList: List[LanguageRange], tags: List[String]): Result[String, List[String]] = 
-        Result.tryCatch(_ -> region rc {
+    pub def filterTags(priorityList: List[LanguageRange], tags: List[String]): Result[String, List[String]] \ IO = 
+        Result.tryCatch(_ -> {
             import static java.util.Locale.filterTags(##java.util.List, ##java.util.Collection): ##java.util.List \ {};
-            let ls      = Interop.Util.ListZ.fromFoldableViaArrayListHH(priorityList);
-            let col     = Interop.Util.Collection.fromFoldableViaArrayListHH(tags);
-            filterTags(ls, col) |> Interop.Util.ListZ.wrapHH(rc) |> Interop.Util.ListZ.toFlixList(Interop.Lang.StringZ.fromJavaObject)
+            let ps1 = List.map(w -> {let LanguageRange(w1) = w; w1}, priorityList) |> Adaptor.toList;
+            let tags1 = Adaptor.toList(tags);
+            filterTags(ps1, unchecked_cast(tags1 as ##java.util.Collection)) |> Adaptor.fromList
         })
+
 
     pub def filterTagsWithFilteringMode(priorityList: List[LanguageRange], 
-                                        mode: LocaleFilteringMode, 
-                                        tags: List[String]): Result[String, List[String]] = 
+                                        mode: FilteringMode, 
+                                        tags: List[String]): Result[String, List[String]] \ IO = 
         Result.tryCatch(_ -> region rc {
             import static java.util.Locale.filterTags(##java.util.List, ##java.util.Collection, ##java.util.Locale$FilteringMode): ##java.util.List \ {};
-            let ls      = Interop.Util.ListZ.fromFoldableViaArrayListHH(priorityList);
-            let col     = Interop.Util.Collection.fromFoldableViaArrayListHH(tags);
-            let LocaleFilteringMode(mode1) = mode;
-            filterTags(ls, col, mode1) |> Interop.Util.ListZ.wrapHH(rc) |> Interop.Util.ListZ.toFlixList(Interop.Lang.StringZ.fromJavaObject)
+            let ps1 = List.map(w -> {let LanguageRange(w1) = w; w1}, priorityList) |> Adaptor.toList;
+            let tags1 = Adaptor.toList(tags);
+            let mode1 = filteringModeToJava(mode);
+            filterTags(ps1, unchecked_cast(tags1 as ##java.util.Collection), mode1) |> Adaptor.fromList
         })
 
-*/
+
 }

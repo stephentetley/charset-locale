@@ -87,25 +87,24 @@ mod Locale.LanguageRange {
             parse(ranges) |> Adaptor.fromList |> List.map(o -> LanguageRange(o))
         })
 
-/*
 
     pub def parseWithCustomizations(ranges: String, 
-                                    customizations: Map[String, List[String]]): Result[String, List[LanguageRange]] =
-        Result.tryCatch(_ -> region rc {
+                                    customizations: Map[String, List[String]]): Result[String, List[LanguageRange]] \ IO =
+        Result.tryCatch(_ -> {
             import static java.util.Locale$LanguageRange.parse(String, ##java.util.Map): ##java.util.List \ {};
-            let cs1 = Interop.Util.HashMap.fromFlixMap(rc, customizations) |> Interop.Util.ImpMapZ.toMapZ |> Interop.Util.MapZ.getHH;
-            parse(ranges, cs1) |> Interop.Util.ListZ.wrapHH(rc) |> Interop.Util.ListZ.toFlixList(fromJavaObject)
+            let cust1 = Map.map(v -> Adaptor.toList(v), customizations);
+            let cust2 = Adaptor.toMap(cust1);
+            parse(ranges, cust2) |> Adaptor.fromList |> List.map(o -> LanguageRange(o))
         })
-
 
     pub def mapEquivalents(priorityList: List[LanguageRange], 
-                            customizations: Map[String, List[String]]): Result[String, List[LanguageRange]] =
-        Result.tryCatch(_ -> region rc {
+                            customizations: Map[String, List[String]]): Result[String, List[LanguageRange]] \ IO =
+        Result.tryCatch(_ -> {
             import static java.util.Locale$LanguageRange.mapEquivalents(##java.util.List, ##java.util.Map): ##java.util.List \ {};
-            let ps1 = Interop.Util.ArrayList.fromFoldable(rc, priorityList) |> Interop.Util.ImpListZ.toListHH;
-            let cs1 = Interop.Util.HashMap.fromFlixMap(rc, customizations) |> Interop.Util.ImpMapZ.toMapZ |> Interop.Util.MapZ.getHH;
-            mapEquivalents(ps1, cs1) |> Interop.Util.ListZ.wrapHH(rc) |> Interop.Util.ListZ.toFlixList(fromJavaObject)
+            let ps1 = List.map(w -> {let LanguageRange(w1) = w; w1}, priorityList) |> Adaptor.toList;
+            let cust1 = Map.map(v -> Adaptor.toList(v), customizations);
+            let cust2 = Adaptor.toMap(cust1);
+            mapEquivalents(ps1, cust2) |> Adaptor.fromList |> List.map(o -> LanguageRange(o))
         })
-*/
 
 }   
