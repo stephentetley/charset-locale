@@ -409,8 +409,22 @@ mod Locale {
                 s
         })
 
-    /// TODO - getExtensionKeys needs conversion from `##java.lang.Character` to `char`
 
+    pub def getExtensionKeys(x: Locale): Set[Char] =
+        import java.util.Locale.getExtensionKeys(): ##java.util.Set \ {};
+        let Locale(x1) = x;
+        let keys = getExtensionKeys(x1);
+        let chars: List[##java.lang.Character] = fromSetAsList(keys);
+        List.foldLeft((s, c) -> {let c1 = charFromJava(c); Set.insert(c1, s)}, Set.empty(), chars)
+    
+    def fromSetAsList(l: ##java.util.Set): List[a] = region rc {
+        import java.util.Set.iterator(): ##java.util.Iterator \ rc;
+        iterator(l) |> Adaptor.fromIterator(rc, Proxy.Proxy: Proxy[a]) |> Iterator.toList
+    }
+
+    def charFromJava(c: ##java.lang.Character): Char = 
+        import java.lang.Character.charValue(): Char \ {};
+        charValue(c)
 
     pub def getUnicodeLocaleAttributes(x: Locale): Set[String] = 
         import java.util.Locale.getUnicodeLocaleAttributes(): ##java.util.Set \ {};
@@ -477,7 +491,7 @@ mod Locale {
     pub def filterTagsWithFilteringMode(priorityList: List[LanguageRange], 
                                         mode: FilteringMode, 
                                         tags: List[String]): Result[String, List[String]] \ IO = 
-        Result.tryCatch(_ -> region rc {
+        Result.tryCatch(_ -> {
             import static java.util.Locale.filterTags(##java.util.List, ##java.util.Collection, ##java.util.Locale$FilteringMode): ##java.util.List \ {};
             let ps1 = List.map(w -> {let LanguageRange(w1) = w; w1}, priorityList) |> Adaptor.toList;
             let tags1 = Adaptor.toList(tags);
