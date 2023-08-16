@@ -47,8 +47,10 @@ mod Locale {
 
     use LocaleCategory.{Display, Format}
     use IsoCountryCode.{Part1_Alpha2, Part1_Alpha3, Part3}
+    use FilteringMode.{AutoselectFiltering, ExtendedFiltering, IgnoreExtendedRanges, MapExtendedRanges, RejectExtendedRanges}
+
     ///
-    /// File types.
+    /// Locale categories.
     ///
     pub enum LocaleCategory with Eq, Order, ToString {
         case Display
@@ -78,6 +80,33 @@ mod Locale {
             case Part1_Alpha3 => get_PART1_ALPHA3()
             case Part3        => get_PART3()
         }
+
+    ///
+    /// Filtering modes.
+    ///
+    pub enum FilteringMode with Eq, Order, ToString {
+        case AutoselectFiltering
+        case ExtendedFiltering
+        case IgnoreExtendedRanges
+        case MapExtendedRanges
+        case RejectExtendedRanges
+    }
+
+    def filteringModeToJava(m: FilteringMode): ##java.util.Locale$FilteringMode = 
+        import static get java.util.Locale$FilteringMode.AUTOSELECT_FILTERING: ##java.util.Locale$FilteringMode \ {} as get_AUTOSELECT_FILTERING;        
+        import static get java.util.Locale$FilteringMode.EXTENDED_FILTERING: ##java.util.Locale$FilteringMode \ {} as get_EXTENDED_FILTERING;
+        import static get java.util.Locale$FilteringMode.IGNORE_EXTENDED_RANGES: ##java.util.Locale$FilteringMode \ {} as get_IGNORE_EXTENDED_RANGES;
+        import static get java.util.Locale$FilteringMode.MAP_EXTENDED_RANGES: ##java.util.Locale$FilteringMode \ {} as get_MAP_EXTENDED_RANGES;
+        import static get java.util.Locale$FilteringMode.REJECT_EXTENDED_RANGES: ##java.util.Locale$FilteringMode \ {} as get_REJECT_EXTENDED_RANGES;
+        match m {
+            case AutoselectFiltering => get_AUTOSELECT_FILTERING()
+            case ExtendedFiltering  => get_EXTENDED_FILTERING()
+            case IgnoreExtendedRanges => get_IGNORE_EXTENDED_RANGES()
+            case MapExtendedRanges => get_MAP_EXTENDED_RANGES()
+            case RejectExtendedRanges => get_REJECT_EXTENDED_RANGES()
+
+        }
+
 
     ///
     /// Returns a new Locale for the supplied language.
@@ -390,15 +419,15 @@ mod Locale {
         import java.util.Locale.getUnicodeLocaleKeys(): ##java.util.Set \ {};
         let Locale(x1) = x;
         getUnicodeLocaleKeys(x1) |> Adaptor.fromSet
-
 /*
     pub def lookup(priorityList: List[LanguageRange], locales: List[Locale]): Result[String, Option[Locale]] =
         Result.tryCatch(_ -> {
             import static java.util.Locale.lookup(##java.util.List, ##java.util.Collection): ##java.util.Locale \ {};
-            let ls  = Interop.Util.ListZ.fromFoldableViaArrayListHH(priorityList);
+            let ls  = List.map(language priorityList) |> Interop.Util.ListZ.fromFoldableViaArrayListHH(priorityList);
             let col = Interop.Util.Collection.fromFoldableViaArrayListHH(locales);
             lookup(ls, col) |> Object.toOption |> Option.map(Locale)
         })
+
 
 
     pub def lookupTag(priorityList: List[LanguageRange], tags: List[String]): Result[String, Option[String]] =
