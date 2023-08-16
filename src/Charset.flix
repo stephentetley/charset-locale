@@ -14,10 +14,42 @@
  * limitations under the License.
  */
 
+use Charset.{Charset}
+
 ///
 /// Represents a Charset.
 ///
 enum Charset(##java.nio.charset.Charset)
+
+instance ToString[Charset] {
+    pub def toString(cs: Charset): String = 
+        import java.nio.charset.Charset.toString(): String \ {};
+        let Charset(cs1) = cs;
+        toString(cs1)
+}
+
+instance Eq[Charset] {
+    pub def eq(x: Charset, y: Charset): Bool = 
+        import java.nio.charset.Charset.equals(##java.lang.Object): Bool \ {};
+        let Charset(x1) = x;
+        let Charset(y1) = y;
+        equals(x1, checked_cast(y1))
+}
+
+instance Order[Charset] {
+    pub def compare(x: Charset, y: Charset): Comparison =
+        import java.nio.charset.Charset.compareTo(##java.nio.charset.Charset): Int32 \ {};
+        let Charset(x1) = x;
+        let Charset(y1) = y;
+        compareTo(x1, y1) |> Comparison.fromInt32
+}
+
+instance Hash[Charset] {
+    pub def hash(cs: Charset): Int32 = 
+        import java.nio.charset.Charset.hashCode(): Int32 \ {};
+        let Charset(cs1) = cs;
+        hashCode(cs1)
+}
 
 mod Charset {
  
