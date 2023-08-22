@@ -1,12 +1,11 @@
 # charset-locale
 
-Flix wrappers over Charset and Locale from the JDK using new the Adaptor code.
+Flix wrappers over `Charset` and `Locale` from the JDK using new the Adaptor code.
 
-This is a quick project to extract the `Charset` and `Locale` modules have been 
-extracted `interop-base` and changed them to use the new `Adaptor` code in Flix's
-standard library.
+The `Charset` and `Locale` modules have been extracted from the project `interop-base` 
+so they can be used without dependencies now that the Flix standard library includes 
+marshaling code in the `Adaptor` module. 
+
+Tests and documentation are to write...
 
 License: Apache 2.0
-
-
-
