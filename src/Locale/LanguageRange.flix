@@ -58,17 +58,17 @@ mod Locale.LanguageRange {
     ///
     pub def new(range: String): Result[String, LanguageRange] =
         Result.tryCatch(_ -> {
-            import new java.util.Locale$LanguageRange(String): ##java.util.Locale$LanguageRange \ {} as new1;
+            import java_new java.util.Locale$LanguageRange(String): ##java.util.Locale$LanguageRange \ {} as new1;
             LanguageRange(new1(range))
         })
 
 
     pub def maxWeight(): Float64 =
-        import static get java.util.Locale$LanguageRange.MAX_WEIGHT: Float64 \ {} as get_MAX_WEIGHT;
+        import static java_get_field java.util.Locale$LanguageRange.MAX_WEIGHT: Float64 \ {} as get_MAX_WEIGHT;
         get_MAX_WEIGHT()
 
     pub def minWeight(): Float64 =
-        import static get java.util.Locale$LanguageRange.MIN_WEIGHT: Float64 \ {} as get_MIN_WEIGHT;
+        import static java_get_field java.util.Locale$LanguageRange.MIN_WEIGHT: Float64 \ {} as get_MIN_WEIGHT;
         get_MIN_WEIGHT()
 
     pub def getRange(x: LanguageRange): String =

@@ -60,27 +60,27 @@ mod Charset {
         Charset(defaultCharset())
 
     pub def iso_8859_1(): Charset =
-        import static get java.nio.charset.StandardCharsets.ISO_8859_1: ##java.nio.charset.Charset \ {} as get_ISO_8859_1;
+        import static java_get_field java.nio.charset.StandardCharsets.ISO_8859_1: ##java.nio.charset.Charset \ {} as get_ISO_8859_1;
         Charset(get_ISO_8859_1())
 
     pub def us_ascii(): Charset =
-        import static get java.nio.charset.StandardCharsets.US_ASCII: ##java.nio.charset.Charset \ {} as get_US_ASCII;
+        import static java_get_field java.nio.charset.StandardCharsets.US_ASCII: ##java.nio.charset.Charset \ {} as get_US_ASCII;
         Charset(get_US_ASCII())
 
     pub def utf_16(): Charset =
-        import static get java.nio.charset.StandardCharsets.UTF_16: ##java.nio.charset.Charset \ {} as get_UTF_16;
+        import static java_get_field java.nio.charset.StandardCharsets.UTF_16: ##java.nio.charset.Charset \ {} as get_UTF_16;
         Charset(get_UTF_16())
 
     pub def utf_16be(): Charset =
-        import static get java.nio.charset.StandardCharsets.UTF_16BE: ##java.nio.charset.Charset \ {} as get_UTF_16BE;
+        import static java_get_field java.nio.charset.StandardCharsets.UTF_16BE: ##java.nio.charset.Charset \ {} as get_UTF_16BE;
         Charset(get_UTF_16BE())
 
     pub def utf_16le(): Charset =
-        import static get java.nio.charset.StandardCharsets.UTF_16LE: ##java.nio.charset.Charset \ {} as get_UTF_16LE;
+        import static java_get_field java.nio.charset.StandardCharsets.UTF_16LE: ##java.nio.charset.Charset \ {} as get_UTF_16LE;
         Charset(get_UTF_16LE())
 
     pub def utf_8(): Charset =
-        import static get java.nio.charset.StandardCharsets.UTF_8: ##java.nio.charset.Charset \ {} as get_UTF_8;
+        import static java_get_field java.nio.charset.StandardCharsets.UTF_8: ##java.nio.charset.Charset \ {} as get_UTF_8;
         Charset(get_UTF_8())
 
     pub def forName(name: String): Result[String, Charset] =
