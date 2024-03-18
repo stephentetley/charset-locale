@@ -113,7 +113,7 @@ mod Locale {
     ///
     /// Returns a new Locale for the supplied language.
     ///
-    pub def new(lang: String): Locale =
+    pub def make(lang: String): Locale =
         import java_new java.util.Locale(String): ##java.util.Locale \ {} as new1;
         Locale(new1(lang))
 
