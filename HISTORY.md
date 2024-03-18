@@ -1,3 +1,9 @@
+### v0.2.0
+   Renamed `Locale.new` to `Locale.make`. Thanks Herluf.
+   Renamed `Locale.newWithCountry` to `Locale.makeWithCountry`.
+   Renamed `Locale.newLocaleWithVariant` to `Locale.makeLocaleWithVariant`.
+   Added test files.
+   
 ### v0.1.2
    Updated Java import syntax to work with Flix head (10.03.2024).
 

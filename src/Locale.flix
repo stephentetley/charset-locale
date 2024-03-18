@@ -114,16 +114,16 @@ mod Locale {
     /// Returns a new Locale for the supplied language.
     ///
     pub def make(lang: String): Locale =
-        import java_new java.util.Locale(String): ##java.util.Locale \ {} as new1;
-        Locale(new1(lang))
+        import java_new java.util.Locale(String): ##java.util.Locale \ {} as make1;
+        Locale(make1(lang))
 
 
     ///
     /// Returns a new Locale for the supplied language and country.
     ///
-    pub def newWithCountry(lang: {lang = String}, country: {country = String}): Locale =
-        import java_new java.util.Locale(String, String): ##java.util.Locale \ {} as new1;
-        Locale(new1(lang.lang, country.country))
+    pub def makeWithCountry(lang: {lang = String}, country: {country = String}): Locale =
+        import java_new java.util.Locale(String, String): ##java.util.Locale \ {} as make1;
+        Locale(make1(lang.lang, country.country))
 
     ///
     /// Returns a new Locale for the supplied language, country and variant.
@@ -133,9 +133,9 @@ mod Locale {
     ///
     /// For guidelines to the formatting of a valid tag see the Javadoc for `java.util.Locale`.
     /// 
-    pub def newLocaleWithVariant(lang: {lang = String}, country: {country = String}, variant: {variant = String}): Locale =
-        import java_new java.util.Locale(String, String, String): ##java.util.Locale \ {} as new1;
-        Locale(new1(lang.lang, country.country, variant.variant))
+    pub def makeLocaleWithVariant(lang: {lang = String}, country: {country = String}, variant: {variant = String}): Locale =
+        import java_new java.util.Locale(String, String, String): ##java.util.Locale \ {} as make1;
+        Locale(make1(lang.lang, country.country, variant.variant))
 
 
 
