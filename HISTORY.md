@@ -1,3 +1,7 @@
+### v0.3.0
+   Renamed `Locale.LanguageRange.new` to `Locale.LanguageRange.make`. Thanks Herluf.
+
+
 ### v0.2.0
    Renamed `Locale.new` to `Locale.make`. Thanks Herluf.
    Renamed `Locale.newWithCountry` to `Locale.makeWithCountry`.
