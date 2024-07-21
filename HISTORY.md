@@ -1,6 +1,9 @@
+### v0.4.0
+   Updated toml to Flix compiler 0.48.0.
+   Used import aliases (JLocale, JCharset) in implementation modules.
+
 ### v0.3.0
    Renamed `Locale.LanguageRange.new` to `Locale.LanguageRange.make`. Thanks Herluf.
-
 
 ### v0.2.0
    Renamed `Locale.new` to `Locale.make`. Thanks Herluf.

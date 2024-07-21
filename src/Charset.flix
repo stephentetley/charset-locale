@@ -54,38 +54,40 @@ instance Hash[Charset] {
 mod Charset {
  
     use Locale.{Locale}
+    import java.nio.charset.{Charset => JCharset}
+
 
     pub def defaultCharset(): Charset \ IO =
-        import static java.nio.charset.Charset.defaultCharset(): ##java.nio.charset.Charset \ IO;
+        import static java.nio.charset.Charset.defaultCharset(): JCharset \ IO;
         Charset(defaultCharset())
 
     pub def iso_8859_1(): Charset =
-        import static java_get_field java.nio.charset.StandardCharsets.ISO_8859_1: ##java.nio.charset.Charset \ {} as get_ISO_8859_1;
+        import static java_get_field java.nio.charset.StandardCharsets.ISO_8859_1: JCharset \ {} as get_ISO_8859_1;
         Charset(get_ISO_8859_1())
 
     pub def us_ascii(): Charset =
-        import static java_get_field java.nio.charset.StandardCharsets.US_ASCII: ##java.nio.charset.Charset \ {} as get_US_ASCII;
+        import static java_get_field java.nio.charset.StandardCharsets.US_ASCII: JCharset \ {} as get_US_ASCII;
         Charset(get_US_ASCII())
 
     pub def utf_16(): Charset =
-        import static java_get_field java.nio.charset.StandardCharsets.UTF_16: ##java.nio.charset.Charset \ {} as get_UTF_16;
+        import static java_get_field java.nio.charset.StandardCharsets.UTF_16: JCharset \ {} as get_UTF_16;
         Charset(get_UTF_16())
 
     pub def utf_16be(): Charset =
-        import static java_get_field java.nio.charset.StandardCharsets.UTF_16BE: ##java.nio.charset.Charset \ {} as get_UTF_16BE;
+        import static java_get_field java.nio.charset.StandardCharsets.UTF_16BE: JCharset \ {} as get_UTF_16BE;
         Charset(get_UTF_16BE())
 
     pub def utf_16le(): Charset =
-        import static java_get_field java.nio.charset.StandardCharsets.UTF_16LE: ##java.nio.charset.Charset \ {} as get_UTF_16LE;
+        import static java_get_field java.nio.charset.StandardCharsets.UTF_16LE: JCharset \ {} as get_UTF_16LE;
         Charset(get_UTF_16LE())
 
     pub def utf_8(): Charset =
-        import static java_get_field java.nio.charset.StandardCharsets.UTF_8: ##java.nio.charset.Charset \ {} as get_UTF_8;
+        import static java_get_field java.nio.charset.StandardCharsets.UTF_8: JCharset \ {} as get_UTF_8;
         Charset(get_UTF_8())
 
     pub def forName(name: String): Result[String, Charset] =
         Result.tryCatch(_ -> {
-            import static java.nio.charset.Charset.forName(String): ##java.nio.charset.Charset \ {};
+            import static java.nio.charset.Charset.forName(String): JCharset \ {};
             Charset(forName(name))
         })
 
@@ -135,7 +137,7 @@ mod Charset {
         canEncode(cs1)
 
     pub def contains(x: Charset, y: Charset): Bool =
-        import java.nio.charset.Charset.contains(##java.nio.charset.Charset): Bool \ {};
+        import java.nio.charset.Charset.contains(JCharset): Bool \ {};
         let Charset(x1) = x;
         let Charset(y1) = y;
         contains(x1, y1)

@@ -50,6 +50,7 @@ mod Locale {
     use LocaleCategory.{Display, Format}
     use IsoCountryCode.{Part1_Alpha2, Part1_Alpha3, Part3}
     use FilteringMode.{AutoselectFiltering, ExtendedFiltering, IgnoreExtendedRanges, MapExtendedRanges, RejectExtendedRanges}
+    import java.util.{Locale => JLocale}
 
     ///
     /// Locale categories.
@@ -114,7 +115,7 @@ mod Locale {
     /// Returns a new Locale for the supplied language.
     ///
     pub def make(lang: String): Locale =
-        import java_new java.util.Locale(String): ##java.util.Locale \ {} as make1;
+        import java_new java.util.Locale(String): JLocale \ {} as make1;
         Locale(make1(lang))
 
 
@@ -122,7 +123,7 @@ mod Locale {
     /// Returns a new Locale for the supplied language and country.
     ///
     pub def makeWithCountry(lang: {lang = String}, country: {country = String}): Locale =
-        import java_new java.util.Locale(String, String): ##java.util.Locale \ {} as make1;
+        import java_new java.util.Locale(String, String): JLocale \ {} as make1;
         Locale(make1(lang.lang, country.country))
 
     ///
@@ -134,14 +135,14 @@ mod Locale {
     /// For guidelines to the formatting of a valid tag see the Javadoc for `java.util.Locale`.
     /// 
     pub def makeLocaleWithVariant(lang: {lang = String}, country: {country = String}, variant: {variant = String}): Locale =
-        import java_new java.util.Locale(String, String, String): ##java.util.Locale \ {} as make1;
+        import java_new java.util.Locale(String, String, String): JLocale \ {} as make1;
         Locale(make1(lang.lang, country.country, variant.variant))
 
 
 
     pub def setJvmDefaultLocale!(x: Locale): Result[String, Unit] \ IO =
         Result.tryCatch(_ -> {
-            import static java.util.Locale.setDefault(##java.util.Locale): Unit \ IO;
+            import static java.util.Locale.setDefault(JLocale): Unit \ IO;
             let Locale(x1) = x;
             setDefault(x1)
         })
@@ -151,7 +152,7 @@ mod Locale {
 
     pub def setJvmDefaultLocaleWithCategory!(cat: LocaleCategory, x: Locale): Result[String, Unit] \ IO =
         Result.tryCatch(_ -> {
-            import static java.util.Locale.setDefault(##java.util.Locale$Category, ##java.util.Locale): Unit \ IO;
+            import static java.util.Locale.setDefault(##java.util.Locale$Category, JLocale): Unit \ IO;
             let Locale(x1) = x;
             let cat1 = localeCategoryToJava(cat);
             setDefault(cat1, x1)
@@ -165,106 +166,106 @@ mod Locale {
     /// The root locale has empty string for country, language and variant.
     ///
     pub def root(): Locale =
-        import static java_get_field java.util.Locale.ROOT: ##java.util.Locale \ {} as get_ROOT;
+        import static java_get_field java.util.Locale.ROOT: JLocale \ {} as get_ROOT;
         Locale(get_ROOT())
 
     ///
     /// Returns the locale for country Canada with language English.
     /// 
     pub def canada(): Locale =
-        import static java_get_field java.util.Locale.CANADA: ##java.util.Locale \ {} as get_CANADA;
+        import static java_get_field java.util.Locale.CANADA: JLocale \ {} as get_CANADA;
         Locale(get_CANADA())
 
     ///
     /// Returns the locale for country Canada with language French.
     /// 
     pub def canada_french(): Locale =
-        import static java_get_field java.util.Locale.CANADA_FRENCH: ##java.util.Locale \ {} as get_CANADA_FRENCH;
+        import static java_get_field java.util.Locale.CANADA_FRENCH: JLocale \ {} as get_CANADA_FRENCH;
         Locale(get_CANADA_FRENCH())
 
     pub def china(): Locale =
-        import static java_get_field java.util.Locale.CHINA: ##java.util.Locale \ {} as get_CHINA;
+        import static java_get_field java.util.Locale.CHINA: JLocale \ {} as get_CHINA;
         Locale(get_CHINA())
 
     pub def chinese(): Locale =
-        import static java_get_field java.util.Locale.CHINESE: ##java.util.Locale \ {} as get_CHINESE;
+        import static java_get_field java.util.Locale.CHINESE: JLocale \ {} as get_CHINESE;
         Locale(get_CHINESE())
 
     pub def english(): Locale =
-        import static java_get_field java.util.Locale.ENGLISH: ##java.util.Locale \ {} as get_ENGLISH;
+        import static java_get_field java.util.Locale.ENGLISH: JLocale \ {} as get_ENGLISH;
         Locale(get_ENGLISH())
 
     pub def france(): Locale =
-        import static java_get_field java.util.Locale.FRANCE: ##java.util.Locale \ {} as get_FRANCE;
+        import static java_get_field java.util.Locale.FRANCE: JLocale \ {} as get_FRANCE;
         Locale(get_FRANCE())
 
     pub def french(): Locale =
-        import static java_get_field java.util.Locale.FRENCH: ##java.util.Locale \ {} as get_FRENCH;
+        import static java_get_field java.util.Locale.FRENCH: JLocale \ {} as get_FRENCH;
         Locale(get_FRENCH())
 
     pub def german(): Locale =
-        import static java_get_field java.util.Locale.GERMAN: ##java.util.Locale \ {} as get_GERMAN;
+        import static java_get_field java.util.Locale.GERMAN: JLocale \ {} as get_GERMAN;
         Locale(get_GERMAN())
 
     pub def germany(): Locale =
-        import static java_get_field java.util.Locale.GERMANY: ##java.util.Locale \ {} as get_GERMANY;
+        import static java_get_field java.util.Locale.GERMANY: JLocale \ {} as get_GERMANY;
         Locale(get_GERMANY())
 
     pub def italian(): Locale =
-        import static java_get_field java.util.Locale.ITALIAN: ##java.util.Locale \ {} as get_ITALIAN;
+        import static java_get_field java.util.Locale.ITALIAN: JLocale \ {} as get_ITALIAN;
         Locale(get_ITALIAN())
 
     pub def italy(): Locale =
-        import static java_get_field java.util.Locale.ITALY: ##java.util.Locale \ {} as get_ITALY;
+        import static java_get_field java.util.Locale.ITALY: JLocale \ {} as get_ITALY;
         Locale(get_ITALY())
 
     pub def japan(): Locale =
-        import static java_get_field java.util.Locale.JAPAN: ##java.util.Locale \ {} as get_JAPAN;
+        import static java_get_field java.util.Locale.JAPAN: JLocale \ {} as get_JAPAN;
         Locale(get_JAPAN())
 
     pub def japanese(): Locale =
-        import static java_get_field java.util.Locale.JAPANESE: ##java.util.Locale \ {} as get_JAPANESE;
+        import static java_get_field java.util.Locale.JAPANESE: JLocale \ {} as get_JAPANESE;
         Locale(get_JAPANESE())
 
     pub def korea(): Locale =
-        import static java_get_field java.util.Locale.KOREA: ##java.util.Locale \ {} as get_KOREA;
+        import static java_get_field java.util.Locale.KOREA: JLocale \ {} as get_KOREA;
         Locale(get_KOREA())
 
     pub def korean(): Locale =
-        import static java_get_field java.util.Locale.KOREAN: ##java.util.Locale \ {} as get_KOREAN;
+        import static java_get_field java.util.Locale.KOREAN: JLocale \ {} as get_KOREAN;
         Locale(get_KOREAN())
 
     pub def prc(): Locale =
-        import static java_get_field java.util.Locale.PRC: ##java.util.Locale \ {} as get_PRC;
+        import static java_get_field java.util.Locale.PRC: JLocale \ {} as get_PRC;
         Locale(get_PRC())
 
 
     pub def simplified_chinese(): Locale =
-        import static java_get_field java.util.Locale.SIMPLIFIED_CHINESE: ##java.util.Locale \ {} as get_SIMPLIFIED_CHINESE;
+        import static java_get_field java.util.Locale.SIMPLIFIED_CHINESE: JLocale \ {} as get_SIMPLIFIED_CHINESE;
         Locale(get_SIMPLIFIED_CHINESE())
 
     pub def taiwan(): Locale =
-        import static java_get_field java.util.Locale.TAIWAN: ##java.util.Locale \ {} as get_TAIWAN;
+        import static java_get_field java.util.Locale.TAIWAN: JLocale \ {} as get_TAIWAN;
         Locale(get_TAIWAN())
 
     pub def traditional_chinese(): Locale =
-        import static java_get_field java.util.Locale.TRADITIONAL_CHINESE: ##java.util.Locale \ {} as get_TRADITIONAL_CHINESE;
+        import static java_get_field java.util.Locale.TRADITIONAL_CHINESE: JLocale \ {} as get_TRADITIONAL_CHINESE;
         Locale(get_TRADITIONAL_CHINESE())
 
     pub def uk(): Locale =
-        import static java_get_field java.util.Locale.UK: ##java.util.Locale \ {} as get_UK;
+        import static java_get_field java.util.Locale.UK: JLocale \ {} as get_UK;
         Locale(get_UK())
 
     pub def us(): Locale =
-        import static java_get_field java.util.Locale.US: ##java.util.Locale \ {} as get_US;
+        import static java_get_field java.util.Locale.US: JLocale \ {} as get_US;
         Locale(get_US())
 
     pub def getDefault(): Locale \ IO =
-        import static java.util.Locale.getDefault(): ##java.util.Locale \ IO;
+        import static java.util.Locale.getDefault(): JLocale \ IO;
         Locale(getDefault())
 
     pub def getDefaultWithCategory(cat: LocaleCategory): Locale \ IO =
-        import static java.util.Locale.getDefault(##java.util.Locale$Category): ##java.util.Locale \ IO;
+        import static java.util.Locale.getDefault(##java.util.Locale$Category): JLocale \ IO;
         let cat1 = localeCategoryToJava(cat);
         Locale(getDefault(cat1))
 
@@ -296,7 +297,7 @@ mod Locale {
         getDisplayCountry(x1)
 
     pub def getDisplayCountryWithLocale(inLocale: {inLocale = Locale}, x: Locale): String =
-        import java.util.Locale.getDisplayCountry(##java.util.Locale): String \ {};
+        import java.util.Locale.getDisplayCountry(JLocale): String \ {};
         let Locale(inLocale1) = inLocale.inLocale;
         let Locale(x1) = x;
         getDisplayCountry(x1, inLocale1)
@@ -307,7 +308,7 @@ mod Locale {
         getDisplayLanguage(x1)
 
     pub def getDisplayLanguageWithLocale(inLocale: {inLocale = Locale}, x: Locale): String =
-        import java.util.Locale.getDisplayLanguage(##java.util.Locale): String \ {};
+        import java.util.Locale.getDisplayLanguage(JLocale): String \ {};
         let Locale(inLocale1) = inLocale.inLocale;
         let Locale(x1) = x;
         getDisplayLanguage(x1, inLocale1)
@@ -318,7 +319,7 @@ mod Locale {
         getDisplayName(x1)
 
     pub def getDisplayNameWithLocale(inLocale: {inLocale = Locale}, x: Locale): String =
-        import java.util.Locale.getDisplayName(##java.util.Locale): String \ {};
+        import java.util.Locale.getDisplayName(JLocale): String \ {};
         let Locale(inLocale1) = inLocale.inLocale;
         let Locale(x1) = x;
         getDisplayName(x1, inLocale1)
@@ -329,7 +330,7 @@ mod Locale {
         getDisplayScript(x1)
 
     pub def getDisplayScriptWithLocale(inLocale: {inLocale = Locale}, x: Locale): String =
-        import java.util.Locale.getDisplayScript(##java.util.Locale): String \ {};
+        import java.util.Locale.getDisplayScript(JLocale): String \ {};
         let Locale(inLocale1) = inLocale.inLocale;
         let Locale(x1) = x;
         getDisplayScript(x1, inLocale1)
@@ -341,7 +342,7 @@ mod Locale {
         getDisplayVariant(x1)
 
     pub def getDisplayVariantWithLocale(inLocale: {inLocale = Locale}, x: Locale): String =
-        import java.util.Locale.getDisplayVariant(##java.util.Locale): String \ {};
+        import java.util.Locale.getDisplayVariant(JLocale): String \ {};
         let Locale(inLocale1) = inLocale.inLocale;
         let Locale(x1) = x;
         getDisplayVariant(x1, inLocale1)        
@@ -353,7 +354,7 @@ mod Locale {
 
     /// Produces a new Locale...
     pub def stripExtensions(x: Locale): Locale =
-        import java.util.Locale.stripExtensions(): ##java.util.Locale \ {};
+        import java.util.Locale.stripExtensions(): JLocale \ {};
         let Locale(x1) = x;
         Locale(stripExtensions(x1))
 
@@ -364,11 +365,11 @@ mod Locale {
         toLanguageTag(x1)
 
     pub def forLanguageTag(tag: String): Locale =
-        import static java.util.Locale.forLanguageTag(String): ##java.util.Locale \ {};
+        import static java.util.Locale.forLanguageTag(String): JLocale \ {};
         Locale(forLanguageTag(tag))
 
     pub def getAvailableLocales(): List[Locale] \ IO = region rc {
-        import static java.util.Locale.getAvailableLocales(): Array[##java.util.Locale, rc] \ {rc, IO} ;
+        import static java.util.Locale.getAvailableLocales(): Array[JLocale, rc] \ {rc, IO} ;
         let _ = Array#{} @ rc;
         let xs = getAvailableLocales() |> Array.toList;
         List.map(Locale, xs)
@@ -438,7 +439,7 @@ mod Locale {
 
     pub def lookup(priorityList: List[LanguageRange], locales: List[Locale]): Result[String, Option[Locale]] \ IO =
         Result.tryCatch(_ -> {
-            import static java.util.Locale.lookup(##java.util.List, ##java.util.Collection): ##java.util.Locale \ {};
+            import static java.util.Locale.lookup(##java.util.List, ##java.util.Collection): JLocale \ {};
             let ps1 = List.map(w -> {let LanguageRange(w1) = w; w1}, priorityList) |> Adaptor.toList;
             let locs1 = List.map(w -> {let Locale(w1) = w; w1}, locales) |> Adaptor.toList;
             lookup(ps1, unchecked_cast(locs1 as ##java.util.Collection)) |> Object.toOption |> Option.map(Locale)
