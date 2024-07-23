@@ -52,13 +52,14 @@ mod Locale.LanguageRange {
 
     use Locale.LanguageRange
     use Locale.LanguageRange.{LanguageRange}
+    import java.util.{Locale$LanguageRange => JLanguageRange}
 
     ///
     /// Returns a new LanguageRange for the supplied `range`.
     ///
     pub def make(range: String): Result[String, LanguageRange] =
         Result.tryCatch(_ -> {
-            import java_new java.util.Locale$LanguageRange(String): ##java.util.Locale$LanguageRange \ {} as new1;
+            import java_new java.util.Locale$LanguageRange(String): JLanguageRange \ {} as new1;
             LanguageRange(new1(range))
         })
 

@@ -51,6 +51,9 @@ mod Locale {
     use IsoCountryCode.{Part1_Alpha2, Part1_Alpha3, Part3}
     use FilteringMode.{AutoselectFiltering, ExtendedFiltering, IgnoreExtendedRanges, MapExtendedRanges, RejectExtendedRanges}
     import java.util.{Locale => JLocale}
+    import java.util.{Locale$Category => JCategory}
+    import java.util.{Locale$FilteringMode => JFilteringMode}
+    import java.util.{Locale$IsoCountryCode => JIsoCountryCode}
 
     ///
     /// Locale categories.
@@ -60,9 +63,9 @@ mod Locale {
         case Format
     }
 
-    def localeCategoryToJava(c: LocaleCategory): ##java.util.Locale$Category = 
-        import static java_get_field java.util.Locale$Category.DISPLAY: ##java.util.Locale$Category \ {} as get_DISPLAY;
-        import static java_get_field java.util.Locale$Category.FORMAT: ##java.util.Locale$Category \ {} as get_FORMAT;
+    def localeCategoryToJava(c: LocaleCategory): JCategory = 
+        import static java_get_field java.util.Locale$Category.DISPLAY: JCategory \ {} as get_DISPLAY;
+        import static java_get_field java.util.Locale$Category.FORMAT: JCategory \ {} as get_FORMAT;
         match c {
             case Display => get_DISPLAY()
             case Format  => get_FORMAT()
@@ -74,10 +77,10 @@ mod Locale {
         case Part3
     }
 
-    def isoCountryCodeToJava(c: IsoCountryCode): ##java.util.Locale$IsoCountryCode = 
-        import static java_get_field java.util.Locale$IsoCountryCode.PART1_ALPHA2: ##java.util.Locale$IsoCountryCode \ {} as get_PART1_ALPHA2;
-        import static java_get_field java.util.Locale$IsoCountryCode.PART1_ALPHA3: ##java.util.Locale$IsoCountryCode \ {} as get_PART1_ALPHA3;
-        import static java_get_field java.util.Locale$IsoCountryCode.PART3: ##java.util.Locale$IsoCountryCode \ {} as get_PART3;
+    def isoCountryCodeToJava(c: IsoCountryCode): JIsoCountryCode = 
+        import static java_get_field java.util.Locale$IsoCountryCode.PART1_ALPHA2: JIsoCountryCode \ {} as get_PART1_ALPHA2;
+        import static java_get_field java.util.Locale$IsoCountryCode.PART1_ALPHA3: JIsoCountryCode \ {} as get_PART1_ALPHA3;
+        import static java_get_field java.util.Locale$IsoCountryCode.PART3: JIsoCountryCode \ {} as get_PART3;
         match c {
             case Part1_Alpha2 => get_PART1_ALPHA2()
             case Part1_Alpha3 => get_PART1_ALPHA3()
@@ -95,12 +98,12 @@ mod Locale {
         case RejectExtendedRanges
     }
 
-    def filteringModeToJava(m: FilteringMode): ##java.util.Locale$FilteringMode = 
-        import static java_get_field java.util.Locale$FilteringMode.AUTOSELECT_FILTERING: ##java.util.Locale$FilteringMode \ {} as get_AUTOSELECT_FILTERING;        
-        import static java_get_field java.util.Locale$FilteringMode.EXTENDED_FILTERING: ##java.util.Locale$FilteringMode \ {} as get_EXTENDED_FILTERING;
-        import static java_get_field java.util.Locale$FilteringMode.IGNORE_EXTENDED_RANGES: ##java.util.Locale$FilteringMode \ {} as get_IGNORE_EXTENDED_RANGES;
-        import static java_get_field java.util.Locale$FilteringMode.MAP_EXTENDED_RANGES: ##java.util.Locale$FilteringMode \ {} as get_MAP_EXTENDED_RANGES;
-        import static java_get_field java.util.Locale$FilteringMode.REJECT_EXTENDED_RANGES: ##java.util.Locale$FilteringMode \ {} as get_REJECT_EXTENDED_RANGES;
+    def filteringModeToJava(m: FilteringMode): JFilteringMode = 
+        import static java_get_field java.util.Locale$FilteringMode.AUTOSELECT_FILTERING: JFilteringMode \ {} as get_AUTOSELECT_FILTERING;        
+        import static java_get_field java.util.Locale$FilteringMode.EXTENDED_FILTERING: JFilteringMode \ {} as get_EXTENDED_FILTERING;
+        import static java_get_field java.util.Locale$FilteringMode.IGNORE_EXTENDED_RANGES: JFilteringMode \ {} as get_IGNORE_EXTENDED_RANGES;
+        import static java_get_field java.util.Locale$FilteringMode.MAP_EXTENDED_RANGES: JFilteringMode \ {} as get_MAP_EXTENDED_RANGES;
+        import static java_get_field java.util.Locale$FilteringMode.REJECT_EXTENDED_RANGES: JFilteringMode \ {} as get_REJECT_EXTENDED_RANGES;
         match m {
             case AutoselectFiltering => get_AUTOSELECT_FILTERING()
             case ExtendedFiltering  => get_EXTENDED_FILTERING()
@@ -152,7 +155,7 @@ mod Locale {
 
     pub def setJvmDefaultLocaleWithCategory!(cat: LocaleCategory, x: Locale): Result[String, Unit] \ IO =
         Result.tryCatch(_ -> {
-            import static java.util.Locale.setDefault(##java.util.Locale$Category, JLocale): Unit \ IO;
+            import static java.util.Locale.setDefault(JCategory, JLocale): Unit \ IO;
             let Locale(x1) = x;
             let cat1 = localeCategoryToJava(cat);
             setDefault(cat1, x1)
@@ -265,7 +268,7 @@ mod Locale {
         Locale(getDefault())
 
     pub def getDefaultWithCategory(cat: LocaleCategory): Locale \ IO =
-        import static java.util.Locale.getDefault(##java.util.Locale$Category): JLocale \ IO;
+        import static java.util.Locale.getDefault(JCategory): JLocale \ IO;
         let cat1 = localeCategoryToJava(cat);
         Locale(getDefault(cat1))
 
@@ -383,7 +386,7 @@ mod Locale {
 
     pub def getIsoCountriesWithIsoCountryCode(icc: IsoCountryCode): Result[String, Set[String]] =
         Result.tryCatch(_ ->  {
-            import static java.util.Locale.getISOCountries(##java.util.Locale$IsoCountryCode): ##java.util.Set \ {};
+            import static java.util.Locale.getISOCountries(JIsoCountryCode): ##java.util.Set \ {};
             let icc1 = isoCountryCodeToJava(icc);
             getISOCountries(icc1) 
                 |> Adaptor.fromSet
@@ -471,7 +474,7 @@ mod Locale {
                                     mode: FilteringMode, 
                                     locales: List[Locale]): Result[String, List[Locale]] \ IO = 
         Result.tryCatch(_ ->  {
-            import static java.util.Locale.filter(##java.util.List, ##java.util.Collection, ##java.util.Locale$FilteringMode): ##java.util.List \ {};
+            import static java.util.Locale.filter(##java.util.List, ##java.util.Collection, JFilteringMode): ##java.util.List \ {};
             let ps1 = List.map(w -> {let LanguageRange(w1) = w; w1}, priorityList) |> Adaptor.toList;
             let locs1 = List.map(w -> {let Locale(w1) = w; w1}, locales) |> Adaptor.toList;
             let mode1 = filteringModeToJava(mode);
@@ -493,7 +496,7 @@ mod Locale {
                                         mode: FilteringMode, 
                                         tags: List[String]): Result[String, List[String]] \ IO = 
         Result.tryCatch(_ -> {
-            import static java.util.Locale.filterTags(##java.util.List, ##java.util.Collection, ##java.util.Locale$FilteringMode): ##java.util.List \ {};
+            import static java.util.Locale.filterTags(##java.util.List, ##java.util.Collection, JFilteringMode): ##java.util.List \ {};
             let ps1 = List.map(w -> {let LanguageRange(w1) = w; w1}, priorityList) |> Adaptor.toList;
             let tags1 = Adaptor.toList(tags);
             let mode1 = filteringModeToJava(mode);
