@@ -50,10 +50,9 @@ mod Locale {
     use LocaleCategory.{Display, Format}
     use IsoCountryCode.{Part1_Alpha2, Part1_Alpha3, Part3}
     use FilteringMode.{AutoselectFiltering, ExtendedFiltering, IgnoreExtendedRanges, MapExtendedRanges, RejectExtendedRanges}
-    import java.util.{Locale => JLocale}
-    import java.util.{Locale$Category => JCategory}
-    import java.util.{Locale$FilteringMode => JFilteringMode}
-    import java.util.{Locale$IsoCountryCode => JIsoCountryCode}
+    import java.util.{Locale => JLocale, Locale$Category => JCategory, 
+                        Locale$FilteringMode => JFilteringMode, 
+                        Locale$IsoCountryCode => JIsoCountryCode}
 
     ///
     /// Locale categories.
