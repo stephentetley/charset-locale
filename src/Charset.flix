@@ -55,7 +55,8 @@ mod Charset {
  
     use Locale.{Locale}
     import java.nio.charset.{Charset => JCharset}
-
+    import java.util.{Map => JMap, SortedMap => JSortedMap, Set => JSet,
+            Locale => JLocale}
 
     pub def defaultCharset(): Charset \ IO =
         import static java.nio.charset.Charset.defaultCharset(): JCharset \ IO;
@@ -121,7 +122,7 @@ mod Charset {
     /// The name is interpreted using the supplied locale.
     ///    
     pub def displayNameWithLocale(locale: Locale, cs: Charset): String =
-        import java.nio.charset.Charset.displayName(##java.util.Locale): String \ {};
+        import java.nio.charset.Charset.displayName(JLocale): String \ {};
         let Charset(cs1) = cs;
         let Locale(locale1) = locale;
         displayName(cs1, locale1)
@@ -143,14 +144,14 @@ mod Charset {
         contains(x1, y1)
 
     pub def aliases(x: Charset): Set[String] =
-        import java.nio.charset.Charset.aliases(): ##java.util.Set \ {};
+        import java.nio.charset.Charset.aliases(): JSet \ {};
         let Charset(x1) = x;
         aliases(x1) |> Adaptor.fromSet
 
 
     pub def availableCharsets(): Map[String, Charset] \ IO = 
-        import static java.nio.charset.Charset.availableCharsets(): ##java.util.SortedMap \ IO;
-        let m = unchecked_cast(availableCharsets() as ##java.util.Map);
+        import static java.nio.charset.Charset.availableCharsets(): JSortedMap \ IO;
+        let m = unchecked_cast(availableCharsets() as JMap);
         m |> Adaptor.fromMap |> Map.map(v -> Charset(v))
 
 }

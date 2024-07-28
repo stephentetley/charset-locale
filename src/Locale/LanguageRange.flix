@@ -53,6 +53,7 @@ mod Locale.LanguageRange {
     use Locale.LanguageRange
     use Locale.LanguageRange.{LanguageRange}
     import java.util.{Locale$LanguageRange => JLanguageRange}
+    import java.util.{List => JList, Map => JMap}
 
     ///
     /// Returns a new LanguageRange for the supplied `range`.
@@ -84,7 +85,7 @@ mod Locale.LanguageRange {
 
     pub def parse(ranges: String): Result[String, List[LanguageRange]] = 
         Result.tryCatch(_ -> {
-            import static java.util.Locale$LanguageRange.parse(String): ##java.util.List \ {};
+            import static java.util.Locale$LanguageRange.parse(String): JList \ {};
             parse(ranges) |> Adaptor.fromList |> List.map(o -> LanguageRange(o))
         })
 
@@ -92,7 +93,7 @@ mod Locale.LanguageRange {
     pub def parseWithCustomizations(ranges: String, 
                                     customizations: Map[String, List[String]]): Result[String, List[LanguageRange]] \ IO =
         Result.tryCatch(_ -> {
-            import static java.util.Locale$LanguageRange.parse(String, ##java.util.Map): ##java.util.List \ {};
+            import static java.util.Locale$LanguageRange.parse(String, JMap): JList \ {};
             let cust1 = Map.map(v -> Adaptor.toList(v), customizations);
             let cust2 = Adaptor.toMap(cust1);
             parse(ranges, cust2) |> Adaptor.fromList |> List.map(o -> LanguageRange(o))
@@ -101,7 +102,7 @@ mod Locale.LanguageRange {
     pub def mapEquivalents(priorityList: List[LanguageRange], 
                             customizations: Map[String, List[String]]): Result[String, List[LanguageRange]] \ IO =
         Result.tryCatch(_ -> {
-            import static java.util.Locale$LanguageRange.mapEquivalents(##java.util.List, ##java.util.Map): ##java.util.List \ {};
+            import static java.util.Locale$LanguageRange.mapEquivalents(JList, JMap): JList \ {};
             let ps1 = List.map(w -> {let LanguageRange(w1) = w; w1}, priorityList) |> Adaptor.toList;
             let cust1 = Map.map(v -> Adaptor.toList(v), customizations);
             let cust2 = Adaptor.toMap(cust1);

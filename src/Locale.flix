@@ -53,6 +53,8 @@ mod Locale {
     import java.util.{Locale => JLocale, Locale$Category => JCategory, 
                         Locale$FilteringMode => JFilteringMode, 
                         Locale$IsoCountryCode => JIsoCountryCode}
+    import java.lang.{Character => JCharacter}
+    import java.util.{Set => JSet, Iterator => JIterator, List => JList, Collection => JCollection}
 
     ///
     /// Locale categories.
@@ -385,7 +387,7 @@ mod Locale {
 
     pub def getIsoCountriesWithIsoCountryCode(icc: IsoCountryCode): Result[String, Set[String]] =
         Result.tryCatch(_ ->  {
-            import static java.util.Locale.getISOCountries(JIsoCountryCode): ##java.util.Set \ {};
+            import static java.util.Locale.getISOCountries(JIsoCountryCode): JSet \ {};
             let icc1 = isoCountryCodeToJava(icc);
             getISOCountries(icc1) 
                 |> Adaptor.fromSet
@@ -414,55 +416,55 @@ mod Locale {
 
 
     pub def getExtensionKeys(x: Locale): Set[Char] =
-        import java.util.Locale.getExtensionKeys(): ##java.util.Set \ {};
+        import java.util.Locale.getExtensionKeys(): JSet \ {};
         let Locale(x1) = x;
         let keys = getExtensionKeys(x1);
-        let chars: List[##java.lang.Character] = fromSetAsList(keys);
+        let chars: List[JCharacter] = fromSetAsList(keys);
         List.foldLeft((s, c) -> {let c1 = charFromJava(c); Set.insert(c1, s)}, Set.empty(), chars)
     
-    def fromSetAsList(l: ##java.util.Set): List[a] = region rc {
-        import java.util.Set.iterator(): ##java.util.Iterator \ rc;
+    def fromSetAsList(l: JSet): List[a] = region rc {
+        import java.util.Set.iterator(): JIterator \ rc;
         iterator(l) |> Adaptor.fromIterator(rc, (Proxy.Proxy: Proxy[a])) |> Iterator.toList
     }
 
-    def charFromJava(c: ##java.lang.Character): Char = 
+    def charFromJava(c: JCharacter): Char = 
         import java.lang.Character.charValue(): Char \ {};
         charValue(c)
 
     pub def getUnicodeLocaleAttributes(x: Locale): Set[String] = 
-        import java.util.Locale.getUnicodeLocaleAttributes(): ##java.util.Set \ {};
+        import java.util.Locale.getUnicodeLocaleAttributes(): JSet \ {};
         let Locale(x1) = x;
         getUnicodeLocaleAttributes(x1) |> Adaptor.fromSet
 
     pub def getUnicodeLocaleKeys(x: Locale): Set[String] = 
-        import java.util.Locale.getUnicodeLocaleKeys(): ##java.util.Set \ {};
+        import java.util.Locale.getUnicodeLocaleKeys(): JSet \ {};
         let Locale(x1) = x;
         getUnicodeLocaleKeys(x1) |> Adaptor.fromSet
 
     pub def lookup(priorityList: List[LanguageRange], locales: List[Locale]): Result[String, Option[Locale]] \ IO =
         Result.tryCatch(_ -> {
-            import static java.util.Locale.lookup(##java.util.List, ##java.util.Collection): JLocale \ {};
+            import static java.util.Locale.lookup(JList, JCollection): JLocale \ {};
             let ps1 = List.map(w -> {let LanguageRange(w1) = w; w1}, priorityList) |> Adaptor.toList;
             let locs1 = List.map(w -> {let Locale(w1) = w; w1}, locales) |> Adaptor.toList;
-            lookup(ps1, unchecked_cast(locs1 as ##java.util.Collection)) |> Object.toOption |> Option.map(Locale)
+            lookup(ps1, unchecked_cast(locs1 as JCollection)) |> Object.toOption |> Option.map(Locale)
         })
 
 
     pub def lookupTag(priorityList: List[LanguageRange], tags: List[String]): Result[String, Option[String]] \ IO =
         Result.tryCatch(_ -> {
-            import static java.util.Locale.lookupTag(##java.util.List, ##java.util.Collection): String \ {};
+            import static java.util.Locale.lookupTag(JList, JCollection): String \ {};
             let ps1 = List.map(w -> {let LanguageRange(w1) = w; w1}, priorityList) |> Adaptor.toList;
             let tags1 = Adaptor.toList(tags);
-            lookupTag(ps1, unchecked_cast(tags1 as ##java.util.Collection)) |> Object.toOption
+            lookupTag(ps1, unchecked_cast(tags1 as JCollection)) |> Object.toOption
         })
 
 
     pub def filter(priorityList: List[LanguageRange], locales: List[Locale]): Result[String, List[Locale]] \ IO =
         Result.tryCatch(_ -> {
-            import static java.util.Locale.filter(##java.util.List, ##java.util.Collection): ##java.util.List \ {};
+            import static java.util.Locale.filter(JList, JCollection): JList \ {};
             let ps1 = List.map(w -> {let LanguageRange(w1) = w; w1}, priorityList) |> Adaptor.toList;
             let locs1 = List.map(w -> {let Locale(w1) = w; w1}, locales) |> Adaptor.toList;
-            filter(ps1, unchecked_cast(locs1 as ##java.util.Collection)) 
+            filter(ps1, unchecked_cast(locs1 as JCollection)) 
                 |> Adaptor.fromList 
                 |> List.map(o -> Locale(o))
         })
@@ -473,21 +475,21 @@ mod Locale {
                                     mode: FilteringMode, 
                                     locales: List[Locale]): Result[String, List[Locale]] \ IO = 
         Result.tryCatch(_ ->  {
-            import static java.util.Locale.filter(##java.util.List, ##java.util.Collection, JFilteringMode): ##java.util.List \ {};
+            import static java.util.Locale.filter(JList, JCollection, JFilteringMode): JList \ {};
             let ps1 = List.map(w -> {let LanguageRange(w1) = w; w1}, priorityList) |> Adaptor.toList;
             let locs1 = List.map(w -> {let Locale(w1) = w; w1}, locales) |> Adaptor.toList;
             let mode1 = filteringModeToJava(mode);
-            filter(ps1, unchecked_cast(locs1 as ##java.util.Collection), mode1) 
+            filter(ps1, unchecked_cast(locs1 as JCollection), mode1) 
                 |> Adaptor.fromList 
                 |> List.map(o -> Locale(o))
         })
 
     pub def filterTags(priorityList: List[LanguageRange], tags: List[String]): Result[String, List[String]] \ IO = 
         Result.tryCatch(_ -> {
-            import static java.util.Locale.filterTags(##java.util.List, ##java.util.Collection): ##java.util.List \ {};
+            import static java.util.Locale.filterTags(JList, JCollection): JList \ {};
             let ps1 = List.map(w -> {let LanguageRange(w1) = w; w1}, priorityList) |> Adaptor.toList;
             let tags1 = Adaptor.toList(tags);
-            filterTags(ps1, unchecked_cast(tags1 as ##java.util.Collection)) |> Adaptor.fromList
+            filterTags(ps1, unchecked_cast(tags1 as JCollection)) |> Adaptor.fromList
         })
 
 
@@ -495,11 +497,11 @@ mod Locale {
                                         mode: FilteringMode, 
                                         tags: List[String]): Result[String, List[String]] \ IO = 
         Result.tryCatch(_ -> {
-            import static java.util.Locale.filterTags(##java.util.List, ##java.util.Collection, JFilteringMode): ##java.util.List \ {};
+            import static java.util.Locale.filterTags(JList, JCollection, JFilteringMode): JList \ {};
             let ps1 = List.map(w -> {let LanguageRange(w1) = w; w1}, priorityList) |> Adaptor.toList;
             let tags1 = Adaptor.toList(tags);
             let mode1 = filteringModeToJava(mode);
-            filterTags(ps1, unchecked_cast(tags1 as ##java.util.Collection), mode1) |> Adaptor.fromList
+            filterTags(ps1, unchecked_cast(tags1 as JCollection), mode1) |> Adaptor.fromList
         })
 
 
