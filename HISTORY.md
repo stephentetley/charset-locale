@@ -1,5 +1,6 @@
-### v_____
-   More import aliases.
+### v0.4.1
+   More type import aliases.
+   Changed to use hash for record field projection.
 
 ### v0.4.0
    Used import aliases (JLocale, JCharset, etc.) in implementation modules.

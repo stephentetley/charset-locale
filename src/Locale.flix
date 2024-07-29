@@ -128,7 +128,7 @@ mod Locale {
     ///
     pub def makeWithCountry(lang: {lang = String}, country: {country = String}): Locale =
         import java_new java.util.Locale(String, String): JLocale \ {} as make1;
-        Locale(make1(lang.lang, country.country))
+        Locale(make1(lang#lang, country#country))
 
     ///
     /// Returns a new Locale for the supplied language, country and variant.
@@ -140,7 +140,7 @@ mod Locale {
     /// 
     pub def makeLocaleWithVariant(lang: {lang = String}, country: {country = String}, variant: {variant = String}): Locale =
         import java_new java.util.Locale(String, String, String): JLocale \ {} as make1;
-        Locale(make1(lang.lang, country.country, variant.variant))
+        Locale(make1(lang#lang, country#country, variant#variant))
 
 
 
@@ -302,7 +302,7 @@ mod Locale {
 
     pub def getDisplayCountryWithLocale(inLocale: {inLocale = Locale}, x: Locale): String =
         import java.util.Locale.getDisplayCountry(JLocale): String \ {};
-        let Locale(inLocale1) = inLocale.inLocale;
+        let Locale(inLocale1) = inLocale#inLocale;
         let Locale(x1) = x;
         getDisplayCountry(x1, inLocale1)
 
@@ -313,7 +313,7 @@ mod Locale {
 
     pub def getDisplayLanguageWithLocale(inLocale: {inLocale = Locale}, x: Locale): String =
         import java.util.Locale.getDisplayLanguage(JLocale): String \ {};
-        let Locale(inLocale1) = inLocale.inLocale;
+        let Locale(inLocale1) = inLocale#inLocale;
         let Locale(x1) = x;
         getDisplayLanguage(x1, inLocale1)
 
@@ -324,7 +324,7 @@ mod Locale {
 
     pub def getDisplayNameWithLocale(inLocale: {inLocale = Locale}, x: Locale): String =
         import java.util.Locale.getDisplayName(JLocale): String \ {};
-        let Locale(inLocale1) = inLocale.inLocale;
+        let Locale(inLocale1) = inLocale#inLocale;
         let Locale(x1) = x;
         getDisplayName(x1, inLocale1)
 
@@ -335,7 +335,7 @@ mod Locale {
 
     pub def getDisplayScriptWithLocale(inLocale: {inLocale = Locale}, x: Locale): String =
         import java.util.Locale.getDisplayScript(JLocale): String \ {};
-        let Locale(inLocale1) = inLocale.inLocale;
+        let Locale(inLocale1) = inLocale#inLocale;
         let Locale(x1) = x;
         getDisplayScript(x1, inLocale1)
 
@@ -347,7 +347,7 @@ mod Locale {
 
     pub def getDisplayVariantWithLocale(inLocale: {inLocale = Locale}, x: Locale): String =
         import java.util.Locale.getDisplayVariant(JLocale): String \ {};
-        let Locale(inLocale1) = inLocale.inLocale;
+        let Locale(inLocale1) = inLocale#inLocale;
         let Locale(x1) = x;
         getDisplayVariant(x1, inLocale1)        
 
