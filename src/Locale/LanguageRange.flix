@@ -60,53 +60,43 @@ mod Locale.LanguageRange {
     ///
     pub def make(range: String): Result[String, LanguageRange] =
         Result.tryCatch(_ -> {
-            import java_new java.util.Locale$LanguageRange(String): JLanguageRange \ {} as new1;
-            LanguageRange(new1(range))
+            LanguageRange(unsafe new JLanguageRange(range))
         })
 
 
-    pub def maxWeight(): Float64 =
-        import static java_get_field java.util.Locale$LanguageRange.MAX_WEIGHT: Float64 \ {} as get_MAX_WEIGHT;
-        get_MAX_WEIGHT()
+    pub def maxWeight(): Float64 = unsafe JLanguageRange.MAX_WEIGHT
 
-    pub def minWeight(): Float64 =
-        import static java_get_field java.util.Locale$LanguageRange.MIN_WEIGHT: Float64 \ {} as get_MIN_WEIGHT;
-        get_MIN_WEIGHT()
+    pub def minWeight(): Float64 = unsafe JLanguageRange.MIN_WEIGHT
 
     pub def getRange(x: LanguageRange): String =
-        import java.util.Locale$LanguageRange.getRange(): String \ {};
         let LanguageRange(x1) = x;
-        getRange(x1)
+        unsafe x1.getRange()
 
     pub def getWeight(x: LanguageRange): Float64 =
-        import java.util.Locale$LanguageRange.getWeight(): Float64 \ {};
         let LanguageRange(x1) = x;
-        getWeight(x1)
+        unsafe x1.getWeight()
 
     pub def parse(ranges: String): Result[String, List[LanguageRange]] = 
         Result.tryCatch(_ -> {
-            import static java.util.Locale$LanguageRange.parse(String): JList \ {};
-            parse(ranges) |> Adaptor.fromList |> List.map(o -> LanguageRange(o))
+            unsafe JLanguageRange.parse(ranges) |> Adaptor.fromList |> List.map(o -> LanguageRange(o))
         })
 
 
     pub def parseWithCustomizations(ranges: String, 
                                     customizations: Map[String, List[String]]): Result[String, List[LanguageRange]] \ IO =
         Result.tryCatch(_ -> {
-            import static java.util.Locale$LanguageRange.parse(String, JMap): JList \ {};
             let cust1 = Map.map(v -> Adaptor.toList(v), customizations);
             let cust2 = Adaptor.toMap(cust1);
-            parse(ranges, cust2) |> Adaptor.fromList |> List.map(o -> LanguageRange(o))
+            unsafe JLanguageRange.parse(ranges, cust2) |> Adaptor.fromList |> List.map(o -> LanguageRange(o))
         })
 
     pub def mapEquivalents(priorityList: List[LanguageRange], 
                             customizations: Map[String, List[String]]): Result[String, List[LanguageRange]] \ IO =
         Result.tryCatch(_ -> {
-            import static java.util.Locale$LanguageRange.mapEquivalents(JList, JMap): JList \ {};
             let ps1 = List.map(w -> {let LanguageRange(w1) = w; w1}, priorityList) |> Adaptor.toList;
             let cust1 = Map.map(v -> Adaptor.toList(v), customizations);
             let cust2 = Adaptor.toMap(cust1);
-            mapEquivalents(ps1, cust2) |> Adaptor.fromList |> List.map(o -> LanguageRange(o))
+            unsafe JLanguageRange.mapEquivalents(ps1, cust2) |> Adaptor.fromList |> List.map(o -> LanguageRange(o))
         })
 
 }   

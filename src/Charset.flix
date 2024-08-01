@@ -22,89 +22,69 @@ use Charset.{Charset}
 enum Charset(##java.nio.charset.Charset)
 
 instance ToString[Charset] {
-    pub def toString(cs: Charset): String = 
-        import java.nio.charset.Charset.toString(): String \ {};
-        let Charset(cs1) = cs;
-        toString(cs1)
+    pub def toString(c: Charset): String = 
+        let Charset(c1) = c;
+        unsafe c1.toString()
 }
 
 instance Eq[Charset] {
     pub def eq(x: Charset, y: Charset): Bool = 
-        import java.nio.charset.Charset.equals(##java.lang.Object): Bool \ {};
         let Charset(x1) = x;
         let Charset(y1) = y;
-        equals(x1, checked_cast(y1))
+        unsafe x1.equals(y1)
 }
 
 instance Order[Charset] {
     pub def compare(x: Charset, y: Charset): Comparison =
-        import java.nio.charset.Charset.compareTo(##java.nio.charset.Charset): Int32 \ {};
         let Charset(x1) = x;
         let Charset(y1) = y;
-        compareTo(x1, y1) |> Comparison.fromInt32
+        unsafe x1.compareTo(y1) |> Comparison.fromInt32
 }
 
 instance Hash[Charset] {
-    pub def hash(cs: Charset): Int32 = 
-        import java.nio.charset.Charset.hashCode(): Int32 \ {};
-        let Charset(cs1) = cs;
-        hashCode(cs1)
+    pub def hash(c: Charset): Int32 = 
+        let Charset(c1) = c;
+        unsafe c1.hashCode()
 }
 
 mod Charset {
  
     use Locale.{Locale}
     import java.nio.charset.{Charset => JCharset}
+    import java.nio.charset.{StandardCharsets}
     import java.util.{Map => JMap, SortedMap => JSortedMap, Set => JSet,
             Locale => JLocale}
 
-    pub def defaultCharset(): Charset \ IO =
-        import static java.nio.charset.Charset.defaultCharset(): JCharset \ IO;
-        Charset(defaultCharset())
+    pub def defaultCharset(): Charset \ IO = Charset(JCharset.defaultCharset())
 
-    pub def iso_8859_1(): Charset =
-        import static java_get_field java.nio.charset.StandardCharsets.ISO_8859_1: JCharset \ {} as get_ISO_8859_1;
-        Charset(get_ISO_8859_1())
+    pub def iso_8859_1(): Charset = Charset(unsafe StandardCharsets.ISO_8859_1)
 
-    pub def us_ascii(): Charset =
-        import static java_get_field java.nio.charset.StandardCharsets.US_ASCII: JCharset \ {} as get_US_ASCII;
-        Charset(get_US_ASCII())
+    pub def us_ascii(): Charset = Charset(unsafe StandardCharsets.US_ASCII)
 
-    pub def utf_16(): Charset =
-        import static java_get_field java.nio.charset.StandardCharsets.UTF_16: JCharset \ {} as get_UTF_16;
-        Charset(get_UTF_16())
+    pub def utf_16(): Charset = Charset(unsafe StandardCharsets.UTF_16)
 
-    pub def utf_16be(): Charset =
-        import static java_get_field java.nio.charset.StandardCharsets.UTF_16BE: JCharset \ {} as get_UTF_16BE;
-        Charset(get_UTF_16BE())
+    pub def utf_16be(): Charset = Charset(unsafe StandardCharsets.UTF_16BE)
 
-    pub def utf_16le(): Charset =
-        import static java_get_field java.nio.charset.StandardCharsets.UTF_16LE: JCharset \ {} as get_UTF_16LE;
-        Charset(get_UTF_16LE())
+    pub def utf_16le(): Charset = Charset(unsafe StandardCharsets.UTF_16LE)
 
-    pub def utf_8(): Charset =
-        import static java_get_field java.nio.charset.StandardCharsets.UTF_8: JCharset \ {} as get_UTF_8;
-        Charset(get_UTF_8())
+    pub def utf_8(): Charset = Charset(unsafe StandardCharsets.UTF_8)
 
     pub def forName(name: String): Result[String, Charset] =
         Result.tryCatch(_ -> {
-            import static java.nio.charset.Charset.forName(String): JCharset \ {};
-            Charset(forName(name))
+            Charset(unsafe JCharset.forName(name))
         })
 
     pub def isSupported(name: String): Result[String, Bool] \ IO =
         Result.tryCatch(_ -> {
-            import static java.nio.charset.Charset.isSupported(String): Bool \ IO;
-            isSupported(name)
+            JCharset.isSupported(name)
         })
 
     /// 
     /// Returns the canonical name of Charset `c`.
     /// 
     pub def name(c: Charset): String =
-        import java.nio.charset.Charset.name(): String \ {};
         let Charset(c1) = c;
-        name(c1)
+        unsafe c1.name()
 
     /// 
     /// Returns the human readable name of the Charset `c`.
@@ -112,46 +92,39 @@ mod Charset {
     /// The name is interpreted using the system's default locale.
     ///
     pub def displayName(c: Charset): String \ IO =
-        import java.nio.charset.Charset.displayName(): String \ IO;
         let Charset(c1) = c;
-        displayName(c1)
+        c1.displayName()
 
     /// 
     /// Returns the human readable name of the Charset `c`.
     /// 
     /// The name is interpreted using the supplied locale.
     ///    
-    pub def displayNameWithLocale(locale: Locale, cs: Charset): String =
-        import java.nio.charset.Charset.displayName(JLocale): String \ {};
-        let Charset(cs1) = cs;
+    pub def displayNameWithLocale(locale: Locale, c: Charset): String =
+        let Charset(c1) = c;
         let Locale(locale1) = locale;
-        displayName(cs1, locale1)
+        unsafe c1.displayName(locale1)
 
-    pub def isRegistered(cs: Charset): Bool =
-        import java.nio.charset.Charset.isRegistered(): Bool \ {};
-        let Charset(cs1) = cs;
-        isRegistered(cs1)
+    pub def isRegistered(c: Charset): Bool =
+        let Charset(c1) = c;
+        unsafe c1.isRegistered()
 
-    pub def canEncode(cs: Charset): Bool =
-        import java.nio.charset.Charset.canEncode(): Bool \ {};
-        let Charset(cs1) = cs;
-        canEncode(cs1)
+    pub def canEncode(c: Charset): Bool =
+        let Charset(c1) = c;
+        unsafe c1.canEncode()
 
     pub def contains(x: Charset, y: Charset): Bool =
-        import java.nio.charset.Charset.contains(JCharset): Bool \ {};
         let Charset(x1) = x;
         let Charset(y1) = y;
-        contains(x1, y1)
+        unsafe x1.contains(y1)
 
     pub def aliases(x: Charset): Set[String] =
-        import java.nio.charset.Charset.aliases(): JSet \ {};
         let Charset(x1) = x;
-        aliases(x1) |> Adaptor.fromSet
+        unsafe x1.aliases() |> Adaptor.fromSet
 
 
     pub def availableCharsets(): Map[String, Charset] \ IO = 
-        import static java.nio.charset.Charset.availableCharsets(): JSortedMap \ IO;
-        let m = unchecked_cast(availableCharsets() as JMap);
+        let m = unchecked_cast(JCharset.availableCharsets() as JMap);
         m |> Adaptor.fromMap |> Map.map(v -> Charset(v))
 
 }
