@@ -1,3 +1,6 @@
+### v0.5.0
+   Updated to use `unsafe` style Java invocation.
+
 ### v0.4.1
    More type import aliases.
    Changed to use hash for record field projection.
