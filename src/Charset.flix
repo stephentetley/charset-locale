@@ -15,11 +15,12 @@
  */
 
 use Charset.{Charset}
+import java.nio.charset.{Charset => JCharset}
 
 ///
 /// Represents a Charset.
 ///
-enum Charset(##java.nio.charset.Charset)
+enum Charset(JCharset)
 
 instance ToString[Charset] {
     pub def toString(c: Charset): String = 

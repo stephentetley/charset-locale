@@ -15,11 +15,12 @@
  */
 
 use Locale.{Locale}
+import java.util.{Locale => JLocale}
 
 ///
 /// Represents a Locale.
 ///
-enum Locale(##java.util.Locale)
+enum Locale(JLocale)
 
 instance ToString[Locale] {
     pub def toString(x: Locale): String = 

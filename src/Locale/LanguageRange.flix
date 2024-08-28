@@ -17,32 +17,32 @@
 mod Locale {
     
     use Locale.LanguageRange.{LanguageRange}
+    import java.util.{Locale$LanguageRange => JLanguageRange}
+    import java.lang.{Object}
 
     ///
     /// Represents a LanguageRange.
     ///
-    pub enum LanguageRange(##java.util.Locale$LanguageRange)
+    pub enum LanguageRange(JLanguageRange)
 
     instance ToString[LanguageRange] {
         pub def toString(x: LanguageRange): String =
-            import java.util.Locale$LanguageRange.toString(): String \ {};
             let LanguageRange(x1) = x;
-            toString(x1)
+            unsafe x1.toString()
     }
 
     instance Eq[LanguageRange] {
         pub def eq(x: LanguageRange, y: LanguageRange): Bool =
-            import java.util.Locale$LanguageRange.equals(##java.lang.Object): Bool \ {};
             let LanguageRange(x1) = x;
             let LanguageRange(y1) = y;
-            equals(x1, checked_cast(y1))
+            let obj = (checked_cast(y1) : Object);
+            unsafe x1.equals(obj)
     }
 
     instance Hash[LanguageRange] {
         pub def hash(x: LanguageRange): Int32 =
-            import java.util.Locale$LanguageRange.hashCode(): Int32 \ {};
             let LanguageRange(x1) = x;
-            hashCode(x1)
+            unsafe x1.hashCode()
     }
 
 }

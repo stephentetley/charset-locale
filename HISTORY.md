@@ -1,3 +1,6 @@
+### v0.5.1
+   Updated to use `import` for Java types.
+
 ### v0.5.0
    Updated to use `unsafe` style Java invocation.
 
