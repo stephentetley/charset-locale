@@ -1,3 +1,6 @@
+### v0.6.0
+   Added `LocalBuilder` effect.
+
 ### v0.5.1
    Updated to use `import` for Java types.
 
