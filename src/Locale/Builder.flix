@@ -51,63 +51,63 @@ mod Locale.Builder {
 
 
     pub def clear(): Unit \ LocaleBuilder = 
-        let builder = do Locale.LocaleBuilder.currentLocaleBuilder();
+        let builder = Locale.LocaleBuilder.currentLocaleBuilder();
         let _ = unsafe builder.clear();
         ()
 
     pub def clearExtensions(): Unit \ LocaleBuilder = 
-        let builder = do Locale.LocaleBuilder.currentLocaleBuilder();
+        let builder = Locale.LocaleBuilder.currentLocaleBuilder();
         let _ = unsafe builder.clearExtensions();
         ()
     
     pub def addUnicodeLocaleAttribute(attr: String): Unit \ LocaleBuilder = 
-        let builder = do Locale.LocaleBuilder.currentLocaleBuilder();
+        let builder = Locale.LocaleBuilder.currentLocaleBuilder();
         let _ = unsafe builder.addUnicodeLocaleAttribute(attr);
         ()
 
     pub def removeUnicodeLocaleAttribute(attr: String): Unit \ LocaleBuilder = 
-        let builder = do Locale.LocaleBuilder.currentLocaleBuilder();
+        let builder = Locale.LocaleBuilder.currentLocaleBuilder();
         let _ = unsafe builder.removeUnicodeLocaleAttribute(attr);
         ()
 
     pub def setExtension(k: Char, v: String): Unit \ LocaleBuilder = 
-        let builder = do Locale.LocaleBuilder.currentLocaleBuilder();
+        let builder = Locale.LocaleBuilder.currentLocaleBuilder();
         let _ = unsafe builder.setExtension(k, v);
         ()
 
     pub def setLanguage(lang: String): Unit \ LocaleBuilder = 
-        let builder = do Locale.LocaleBuilder.currentLocaleBuilder();
+        let builder = Locale.LocaleBuilder.currentLocaleBuilder();
         let _ = unsafe builder.setLanguage(lang);
         ()
 
     pub def setLanguageTag(tag: String): Unit \ LocaleBuilder = 
-        let builder = do Locale.LocaleBuilder.currentLocaleBuilder();
+        let builder = Locale.LocaleBuilder.currentLocaleBuilder();
         let _ = unsafe builder.setLanguageTag(tag);
         ()
 
     pub def setLocale(loc: Locale): Unit \ LocaleBuilder = 
-        let builder = do Locale.LocaleBuilder.currentLocaleBuilder();
+        let builder = Locale.LocaleBuilder.currentLocaleBuilder();
         let Locale(loc1) = loc;
         let _ = unsafe builder.setLocale(loc1);
         ()
 
     pub def setRegion(rgn: String): Unit \ LocaleBuilder = 
-        let builder = do Locale.LocaleBuilder.currentLocaleBuilder();
+        let builder = Locale.LocaleBuilder.currentLocaleBuilder();
         let _ = unsafe builder.setVariant(rgn);
         ()
 
     pub def setScript(script: String): Unit \ LocaleBuilder = 
-        let builder = do Locale.LocaleBuilder.currentLocaleBuilder();
+        let builder = Locale.LocaleBuilder.currentLocaleBuilder();
         let _ = unsafe builder.setScript(script);
         ()
 
     pub def setUnicodeLocaleKeyword(key: String, ty: String): Unit \ LocaleBuilder = 
-        let builder = do Locale.LocaleBuilder.currentLocaleBuilder();
+        let builder = Locale.LocaleBuilder.currentLocaleBuilder();
         let _ = unsafe builder.setUnicodeLocaleKeyword(key, ty);
         ()
 
     pub def setVariant(variant: String): Unit \ LocaleBuilder = 
-        let builder = do Locale.LocaleBuilder.currentLocaleBuilder();
+        let builder = Locale.LocaleBuilder.currentLocaleBuilder();
         let _ = unsafe builder.setVariant(variant);
         ()
 

@@ -1,3 +1,6 @@
+### v0.7.0
+   Removed `do` from effect operations.
+
 ### v0.6.0
    Added `LocalBuilder` effect.
 
