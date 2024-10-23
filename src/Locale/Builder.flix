@@ -32,10 +32,10 @@ mod Locale.Builder {
     use Locale.LocaleBuilder
     import java.util.{Locale$Builder => JLocaleBuilder}
 
-    pub def run(build: Unit -> a \ LocaleBuilder + ef): Result[String, Locale] \ ef =
+    pub def handle(build: a -> b \ ef): a -> Result[String, Locale] \ (ef - LocaleBuilder) =
         let builder = unsafe new JLocaleBuilder();
-        let ans = try {
-            Ok(build())
+        x -> let ans = try {
+            Ok(build(x))
         } with LocaleBuilder {
             def currentLocaleBuilder(k) = {
                 k(builder)
@@ -48,6 +48,9 @@ mod Locale.Builder {
             case Ok(_)    => Ok(Locale(unsafe builder.build()))
             case Err(msg) => Err(msg)
         }
+
+    pub def run(build: Unit -> a \ ef): Result[String, Locale] \ (ef - LocaleBuilder) = handle(build)()
+
 
 
     pub def clear(): Unit \ LocaleBuilder = 
