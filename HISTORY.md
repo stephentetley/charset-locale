@@ -1,3 +1,7 @@
+### v0.8.0
+   Changed `run` to `build` in `LocaleBuilder`.
+   Changed `try-with` to `run-with` in `LocaleBuilder`.
+
 ### v0.7.0
    Removed `do` from effect operations.
 

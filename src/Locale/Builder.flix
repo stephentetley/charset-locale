@@ -18,9 +18,9 @@ mod Locale {
     
     import java.util.{Locale$Builder => JLocaleBuilder}
 
-    pub eff LocaleBuilder {
-        pub def currentLocaleBuilder(): JLocaleBuilder
-        pub def fail(msg: String): Void
+    eff LocaleBuilder {
+        def currentLocaleBuilder(): JLocaleBuilder
+        def fail(msg: String): Void
     }
 
 }
@@ -34,7 +34,7 @@ mod Locale.Builder {
 
     pub def handle(build: a -> b \ ef): a -> Result[String, Locale] \ (ef - LocaleBuilder) =
         let builder = unsafe new JLocaleBuilder();
-        x -> let ans = try {
+        x -> let ans = run {
             Ok(build(x))
         } with LocaleBuilder {
             def currentLocaleBuilder(k) = {
@@ -49,7 +49,7 @@ mod Locale.Builder {
             case Err(msg) => Err(msg)
         }
 
-    pub def run(build: Unit -> a \ ef): Result[String, Locale] \ (ef - LocaleBuilder) = handle(build)()
+    pub def build(buildfun: Unit -> a \ ef): Result[String, Locale] \ (ef - LocaleBuilder) = handle(buildfun)()
 
 
 

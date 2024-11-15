@@ -24,7 +24,7 @@ mod TestLocaleBuilder {
             let _ = Locale.Builder.setRegion("RS");
             ()
         };
-        Locale.Builder.run(action) |> Result.isOk
+        Locale.Builder.build(action) |> Result.isOk
 
 
 }
