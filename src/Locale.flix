@@ -202,7 +202,8 @@ mod Locale {
 
     pub def us(): Locale = Locale(unsafe JLocale.US)
 
-    pub def getDefault(): Locale \ IO = checked_ecast(Locale(unsafe JLocale.getDefault()))
+    pub def getDefault(): Locale \ IO = 
+        checked_ecast(Locale(unsafe JLocale.getDefault()))
 
     pub def getDefaultWithCategory(cat: LocaleCategory): Locale \ IO =
         let cat1 = localeCategoryToJava(cat);
@@ -311,7 +312,7 @@ mod Locale {
     pub def getIsoLanguages(): Result[String, List[String]] =
         Result.tryCatch(_ -> {
             region rc {
-                let _ = Array#{} @ rc;            
+                let _ = Array#{} @ rc;
                 unsafe JLocale.getISOLanguages() |> Array.toList
             }
         })
@@ -337,7 +338,7 @@ mod Locale {
         unsafe s.iterator() |> Adaptor.fromIterator(rc, (Proxy.Proxy: Proxy[a])) |> Iterator.toList
     }
 
-    def charFromJava(c: JCharacter): Char = unsafe c.charValue()
+    def charFromJava(c: JCharacter): Char = c.charValue()
 
     pub def getUnicodeLocaleAttributes(x: Locale): Set[String] = 
         let Locale(x1) = x;

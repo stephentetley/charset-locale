@@ -35,8 +35,7 @@ mod Locale {
         pub def eq(x: LanguageRange, y: LanguageRange): Bool =
             let LanguageRange(x1) = x;
             let LanguageRange(y1) = y;
-            let obj = (checked_cast(y1) : Object);
-            unsafe x1.equals(obj)
+            unsafe x1.equals(y1)
     }
 
     instance Hash[LanguageRange] {

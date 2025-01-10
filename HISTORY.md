@@ -1,3 +1,7 @@
+### v0.9.0
+   Removed some checked_casts.
+   Change to use `with handler` effects syntax. Thanks Jonathan!
+
 ### v0.8.0
    Changed `run` to `build` in `LocaleBuilder`.
    Changed `try-with` to `run-with` in `LocaleBuilder`.
