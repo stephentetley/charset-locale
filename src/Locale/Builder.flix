@@ -36,7 +36,7 @@ mod Locale.Builder {
         let builder = unsafe new JLocaleBuilder();
         x -> let ans = run {
             Ok(build(x))
-        } with LocaleBuilder {
+        } with handler LocaleBuilder {
             def currentLocaleBuilder(k) = {
                 k(builder)
             }
