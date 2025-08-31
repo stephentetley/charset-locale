@@ -1,3 +1,6 @@
+### v0.9.1
+   Fixed error in `setRegion` that wrapped wrong Java method.
+
 ### v0.9.0
    Removed some checked_casts.
    Change to use `with handler` effects syntax. Thanks Jonathan!

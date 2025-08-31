@@ -96,7 +96,7 @@ mod Locale.Builder {
 
     pub def setRegion(rgn: String): Unit \ LocaleBuilder = 
         let builder = Locale.LocaleBuilder.currentLocaleBuilder();
-        let _ = unsafe builder.setVariant(rgn);
+        let _ = unsafe builder.setRegion(rgn);
         ()
 
     pub def setScript(script: String): Unit \ LocaleBuilder = 

@@ -19,9 +19,8 @@ mod TestLocaleBuilder {
     @test
     def run01(): Bool =
         let action = () -> {
-            let _ = Locale.Builder.setLanguage("sr");
-            let _ = Locale.Builder.setScript("Latn");
-            let _ = Locale.Builder.setRegion("RS");
+            let _ = Locale.Builder.setLanguage("en");        
+            let _ = Locale.Builder.setRegion("US");
             ()
         };
         Locale.Builder.build(action) |> Result.isOk
