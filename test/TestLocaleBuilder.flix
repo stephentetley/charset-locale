@@ -17,13 +17,13 @@
 mod TestLocaleBuilder {
 
     @test
-    def run01(): Bool =
+    def run01(): Bool \ IO =
         let action = () -> {
-            let _ = Locale.Builder.setLanguage("en");        
-            let _ = Locale.Builder.setRegion("US");
+            Locale.LocaleBuilder.setLanguage("en");        
+            Locale.LocaleBuilder.setRegion("US");
             ()
         };
-        Locale.Builder.build(action) |> Result.isOk
+        Locale.Builder.runWithIO(action) |> Result.isOk
 
 
 }

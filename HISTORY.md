@@ -1,3 +1,6 @@
+### v0.10.0
+   Changed `Locale.Builder` to have "interface style" effect definition.
+
 ### v0.9.1
    Fixed error in `setRegion` that wrapped wrong Java method.
 
