@@ -28,20 +28,20 @@ mod Locale {
     instance ToString[LanguageRange] {
         pub def toString(x: LanguageRange): String =
             let LanguageRange(x1) = x;
-            unsafe x1.toString()
+            unsafe IO { x1.toString() }
     }
 
     instance Eq[LanguageRange] {
         pub def eq(x: LanguageRange, y: LanguageRange): Bool =
             let LanguageRange(x1) = x;
             let LanguageRange(y1) = y;
-            unsafe x1.equals(y1)
+            unsafe IO { x1.equals(y1) }
     }
 
     instance Hash[LanguageRange] {
         pub def hash(x: LanguageRange): Int32 =
             let LanguageRange(x1) = x;
-            unsafe x1.hashCode()
+            unsafe IO { x1.hashCode() }
     }
 
 }
@@ -59,25 +59,25 @@ mod Locale.LanguageRange {
     ///
     pub def make(range: String): Result[String, LanguageRange] =
         Result.tryCatch(_ -> {
-            LanguageRange(unsafe new JLanguageRange(range))
+            LanguageRange(unsafe IO { new JLanguageRange(range) })
         })
 
 
-    pub def maxWeight(): Float64 = unsafe JLanguageRange.MAX_WEIGHT
+    pub def maxWeight(): Float64 = unsafe IO { JLanguageRange.MAX_WEIGHT }
 
-    pub def minWeight(): Float64 = unsafe JLanguageRange.MIN_WEIGHT
+    pub def minWeight(): Float64 = unsafe IO { JLanguageRange.MIN_WEIGHT }
 
     pub def getRange(x: LanguageRange): String =
         let LanguageRange(x1) = x;
-        unsafe x1.getRange()
+        unsafe IO { x1.getRange() }
 
     pub def getWeight(x: LanguageRange): Float64 =
         let LanguageRange(x1) = x;
-        unsafe x1.getWeight()
+        unsafe IO { x1.getWeight() }
 
     pub def parse(ranges: String): Result[String, List[LanguageRange]] = 
         Result.tryCatch(_ -> {
-            unsafe JLanguageRange.parse(ranges) |> Adaptor.fromList |> List.map(o -> LanguageRange(o))
+            unsafe IO { JLanguageRange.parse(ranges) } |> Adaptor.fromList |> List.map(o -> LanguageRange(o))
         })
 
 
@@ -86,7 +86,7 @@ mod Locale.LanguageRange {
         Result.tryCatch(_ -> {
             let cust1 = Map.map(v -> Adaptor.toList(v), customizations);
             let cust2 = Adaptor.toMap(cust1);
-            unsafe JLanguageRange.parse(ranges, cust2) |> Adaptor.fromList |> List.map(o -> LanguageRange(o))
+            unsafe IO { JLanguageRange.parse(ranges, cust2) } |> Adaptor.fromList |> List.map(o -> LanguageRange(o))
         })
 
     pub def mapEquivalents(priorityList: List[LanguageRange], 
@@ -95,7 +95,7 @@ mod Locale.LanguageRange {
             let ps1 = List.map(w -> {let LanguageRange(w1) = w; w1}, priorityList) |> Adaptor.toList;
             let cust1 = Map.map(v -> Adaptor.toList(v), customizations);
             let cust2 = Adaptor.toMap(cust1);
-            unsafe JLanguageRange.mapEquivalents(ps1, cust2) |> Adaptor.fromList |> List.map(o -> LanguageRange(o))
+            unsafe IO { JLanguageRange.mapEquivalents(ps1, cust2) } |> Adaptor.fromList |> List.map(o -> LanguageRange(o))
         })
 
 }   

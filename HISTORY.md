@@ -1,4 +1,5 @@
 ### v0.10.0
+   Updated unsafe calls to work with Flix 0.67.0.
    Changed `Locale.Builder` to have "interface style" effect definition.
 
 ### v0.9.1

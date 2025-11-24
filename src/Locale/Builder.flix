@@ -60,7 +60,7 @@ mod Locale.Builder {
     import java.lang.NullPointerException 
 
     pub def handle(build: a -> b \ ef): a -> Result[IoError, Locale] \ ef - LocaleBuilder + IO =
-        let builder = unsafe new JLocaleBuilder();
+        let builder = unsafe IO { new JLocaleBuilder() };
         x -> let ans = run {
             Ok(build(x))
         } with handler LocaleBuilder {
@@ -153,7 +153,7 @@ mod Locale.Builder {
 
         };
         match ans {
-            case Ok(_)    => Ok(Locale(unsafe builder.build()))
+            case Ok(_)    => Ok(Locale(unsafe IO { builder.build() }))
             case Err(msg) => Err(msg)
         }
 

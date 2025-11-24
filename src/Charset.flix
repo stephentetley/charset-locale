@@ -25,27 +25,27 @@ enum Charset(JCharset)
 instance ToString[Charset] {
     pub def toString(c: Charset): String = 
         let Charset(c1) = c;
-        unsafe c1.toString()
+        unsafe IO { c1.toString() }
 }
 
 instance Eq[Charset] {
     pub def eq(x: Charset, y: Charset): Bool = 
         let Charset(x1) = x;
         let Charset(y1) = y;
-        unsafe x1.equals(y1)
+        unsafe IO { x1.equals(y1) }
 }
 
 instance Order[Charset] {
     pub def compare(x: Charset, y: Charset): Comparison =
         let Charset(x1) = x;
         let Charset(y1) = y;
-        unsafe x1.compareTo(y1) |> Comparison.fromInt32
+        unsafe IO { x1.compareTo(y1) } |> Comparison.fromInt32
 }
 
 instance Hash[Charset] {
     pub def hash(c: Charset): Int32 = 
         let Charset(c1) = c;
-        unsafe c1.hashCode()
+        unsafe IO { c1.hashCode() }
 }
 
 mod Charset {
@@ -58,21 +58,21 @@ mod Charset {
 
     pub def defaultCharset(): Charset \ IO = Charset(JCharset.defaultCharset())
 
-    pub def iso_8859_1(): Charset = Charset(unsafe StandardCharsets.ISO_8859_1)
+    pub def iso_8859_1(): Charset = Charset(unsafe IO { StandardCharsets.ISO_8859_1 })
 
-    pub def us_ascii(): Charset = Charset(unsafe StandardCharsets.US_ASCII)
+    pub def us_ascii(): Charset = Charset(unsafe IO { StandardCharsets.US_ASCII })
 
-    pub def utf_16(): Charset = Charset(unsafe StandardCharsets.UTF_16)
+    pub def utf_16(): Charset = Charset(unsafe IO { StandardCharsets.UTF_16 })
 
-    pub def utf_16be(): Charset = Charset(unsafe StandardCharsets.UTF_16BE)
+    pub def utf_16be(): Charset = Charset(unsafe IO { StandardCharsets.UTF_16BE })
 
-    pub def utf_16le(): Charset = Charset(unsafe StandardCharsets.UTF_16LE)
+    pub def utf_16le(): Charset = Charset(unsafe IO { StandardCharsets.UTF_16LE })
 
-    pub def utf_8(): Charset = Charset(unsafe StandardCharsets.UTF_8)
+    pub def utf_8(): Charset = Charset(unsafe IO { StandardCharsets.UTF_8 })
 
     pub def forName(name: String): Result[String, Charset] =
         Result.tryCatch(_ -> {
-            Charset(unsafe JCharset.forName(name))
+            Charset(unsafe IO { JCharset.forName(name) })
         })
 
     pub def isSupported(name: String): Result[String, Bool] \ IO =
@@ -85,7 +85,7 @@ mod Charset {
     /// 
     pub def name(c: Charset): String =
         let Charset(c1) = c;
-        unsafe c1.name()
+        unsafe IO { c1.name() }
 
     /// 
     /// Returns the human readable name of the Charset `c`.
@@ -104,24 +104,24 @@ mod Charset {
     pub def displayNameWithLocale(locale: Locale, c: Charset): String =
         let Charset(c1) = c;
         let Locale(locale1) = locale;
-        unsafe c1.displayName(locale1)
+        unsafe IO { c1.displayName(locale1) }
 
     pub def isRegistered(c: Charset): Bool =
         let Charset(c1) = c;
-        unsafe c1.isRegistered()
+        unsafe IO { c1.isRegistered() }
 
     pub def canEncode(c: Charset): Bool =
         let Charset(c1) = c;
-        unsafe c1.canEncode()
+        unsafe IO { c1.canEncode() }
 
     pub def contains(x: Charset, y: Charset): Bool =
         let Charset(x1) = x;
         let Charset(y1) = y;
-        unsafe x1.contains(y1)
+        unsafe IO { x1.contains(y1) }
 
     pub def aliases(x: Charset): Set[String] =
         let Charset(x1) = x;
-        unsafe x1.aliases() |> Adaptor.fromSet
+        unsafe IO { x1.aliases() } |> Adaptor.fromSet
 
 
     pub def availableCharsets(): Map[String, Charset] \ IO = 
