@@ -1,3 +1,9 @@
+### v0.11.0
+   Put modules in a top level namespace `InteropLocale`.
+   Exposed modules as `pub` and pushed datatypes down one layer into their
+   respective modules.
+   Updated tests to use `Assert` effect.
+
 ### v0.10.0
    Updated unsafe calls to work with Flix 0.67.0.
    Changed `Locale.Builder` to have "interface style" effect definition.

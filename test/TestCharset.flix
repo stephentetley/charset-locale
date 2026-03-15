@@ -16,9 +16,18 @@
 
 mod TestCharset {
 
-    @test
-    def defaultCharset01(): Charset \ IO =
-        Charset.defaultCharset()
+    use Assert.{assertEq}
+
+    @Test
+    def defaultCharset01(): Unit \ {Assert + IO} =
+        assertEq(
+            expected = true,
+            { 
+                let cs = InteropLocale.Charset.defaultCharset();
+                println(cs);
+                true
+            }
+        )
 
 
 }

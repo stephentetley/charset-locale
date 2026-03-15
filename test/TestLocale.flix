@@ -16,9 +16,18 @@
 
 mod TestLocale {
 
-    @test
-    def make01(): Locale =
-        Locale.make("en")
+    use Assert.{assertEq}
+
+    @Test
+    def make01(): Unit \ {Assert + IO} =
+        assertEq(
+            expected = true,
+            { 
+                let loc = InteropLocale.Locale.make("en");
+                println(loc);
+                true
+            }
+        )
 
 
 }

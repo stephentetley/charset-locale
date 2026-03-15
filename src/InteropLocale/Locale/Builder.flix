@@ -14,11 +14,20 @@
  * limitations under the License.
  */
 
-mod Locale {
-    
-    import java.util.{Locale$Builder => JLocaleBuilder}
 
-    eff LocaleBuilder {
+
+pub mod InteropLocale.Locale.Builder {
+
+    use IoError.ErrorKind
+    use IoError.IoError
+    use InteropLocale.Locale.Locale
+
+    import java.util.{Locale$Builder => JLocaleBuilder}
+    import java.util.IllformedLocaleException
+    import java.lang.NullPointerException 
+
+
+    pub eff LocaleBuilder {
 
         def clear(): Unit
 
@@ -45,19 +54,6 @@ mod Locale {
         def setVariant(variant: String): Unit
     }
 
-}
-
-
-mod Locale.Builder {
-
-    use IoError.ErrorKind
-    use IoError.IoError
-    use Locale.{Locale}
-    use Locale.LocaleBuilder
-
-    import java.util.{Locale$Builder => JLocaleBuilder}
-    import java.util.IllformedLocaleException
-    import java.lang.NullPointerException 
 
     pub def handle(build: a -> b \ ef): a -> Result[IoError, Locale] \ ef - LocaleBuilder + IO =
         let builder = unsafe IO { new JLocaleBuilder() };
@@ -113,7 +109,7 @@ mod Locale.Builder {
             }
 
             def setLocale(loc, k) = try {
-                let Locale(loc1) = loc;
+                let Locale.Locale(loc1) = loc;
                 builder.setLocale(loc1);
                 k()
             } catch {
@@ -153,7 +149,7 @@ mod Locale.Builder {
 
         };
         match ans {
-            case Ok(_)    => Ok(Locale(unsafe IO { builder.build() }))
+            case Ok(_)    => Ok(Locale.Locale(unsafe IO { builder.build() }))
             case Err(msg) => Err(msg)
         }
 

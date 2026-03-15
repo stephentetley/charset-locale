@@ -14,46 +14,43 @@
  * limitations under the License.
  */
 
-use Locale.{Locale}
-import java.util.{Locale => JLocale}
 
-///
-/// Represents a Locale.
-///
-enum Locale(JLocale)
 
-instance ToString[Locale] {
-    pub def toString(x: Locale): String = 
-        let Locale(x1) = x;
-        unsafe IO { x1.toString() }
-}
+pub mod InteropLocale.Locale {
 
-instance Eq[Locale] {
-    pub def eq(x: Locale, y: Locale): Bool = 
-        let Locale(x1) = x;
-        let Locale(y1) = y;
-        unsafe IO { x1.equals(y1) }
-}
 
-instance Hash[Locale] {
-    pub def hash(x: Locale): Int32 = 
-        let Locale(x1) = x;
-        unsafe IO { x1.hashCode() }
-}
-
-mod Locale {
-
-    use Locale.LanguageRange
-    use Locale.LanguageRange.{LanguageRange}
-    use LocaleCategory.{Display, Format}
-    use IsoCountryCode.{Part1_Alpha2, Part1_Alpha3, Part3}
-    use FilteringMode.{AutoselectFiltering, ExtendedFiltering, IgnoreExtendedRanges, MapExtendedRanges, RejectExtendedRanges}
+    use InteropLocale.Locale.LanguageRange.LanguageRange
     
     import java.util.{Locale => JLocale, Locale$Category => JCategory, 
                         Locale$FilteringMode => JFilteringMode, 
                         Locale$IsoCountryCode => JIsoCountryCode}
     import java.lang.{Character => JCharacter}
     import java.util.{Set => JSet, Iterator => JIterator, List => JList, Collection => JCollection}
+
+    ///
+    /// Represents a Locale.
+    ///
+    pub enum Locale(JLocale)
+
+    instance ToString[Locale] {
+        pub def toString(x: Locale): String = 
+            let Locale.Locale(x1) = x;
+            unsafe IO { x1.toString() }
+    }
+
+    instance Eq[Locale] {
+        pub def eq(x: Locale, y: Locale): Bool = 
+            let Locale.Locale(x1) = x;
+            let Locale.Locale(y1) = y;
+            unsafe IO { x1.equals(y1) }
+    }
+
+    instance Hash[Locale] {
+        pub def hash(x: Locale): Int32 = 
+            let Locale.Locale(x1) = x;
+            unsafe IO { x1.hashCode() }
+    }
+
 
     ///
     /// Locale categories.
@@ -65,8 +62,8 @@ mod Locale {
 
     def localeCategoryToJava(c: LocaleCategory): JCategory = 
         match c {
-            case Display => unsafe IO { JCategory.DISPLAY }
-            case Format  => unsafe IO { JCategory.FORMAT }
+            case LocaleCategory.Display => unsafe IO { JCategory.DISPLAY }
+            case LocaleCategory.Format  => unsafe IO { JCategory.FORMAT }
         }
 
     pub enum IsoCountryCode with Eq, Order, ToString {
@@ -77,9 +74,9 @@ mod Locale {
 
     def isoCountryCodeToJava(c: IsoCountryCode): JIsoCountryCode = 
         match c {
-            case Part1_Alpha2 => unsafe IO { JIsoCountryCode.PART1_ALPHA2 }
-            case Part1_Alpha3 => unsafe IO { JIsoCountryCode.PART1_ALPHA3 }
-            case Part3        => unsafe IO { JIsoCountryCode.PART3 }
+            case IsoCountryCode.Part1_Alpha2 => unsafe IO { JIsoCountryCode.PART1_ALPHA2 }
+            case IsoCountryCode.Part1_Alpha3 => unsafe IO { JIsoCountryCode.PART1_ALPHA3 }
+            case IsoCountryCode.Part3        => unsafe IO { JIsoCountryCode.PART3 }
         }
 
     ///
@@ -95,11 +92,11 @@ mod Locale {
 
     def filteringModeToJava(m: FilteringMode): JFilteringMode = 
         match m {
-            case AutoselectFiltering    => unsafe IO { JFilteringMode.AUTOSELECT_FILTERING }
-            case ExtendedFiltering      => unsafe IO { JFilteringMode.EXTENDED_FILTERING }
-            case IgnoreExtendedRanges   => unsafe IO { JFilteringMode.IGNORE_EXTENDED_RANGES }
-            case MapExtendedRanges      => unsafe IO { JFilteringMode.MAP_EXTENDED_RANGES }
-            case RejectExtendedRanges   => unsafe IO { JFilteringMode.REJECT_EXTENDED_RANGES }
+            case FilteringMode.AutoselectFiltering    => unsafe IO { JFilteringMode.AUTOSELECT_FILTERING }
+            case FilteringMode.ExtendedFiltering      => unsafe IO { JFilteringMode.EXTENDED_FILTERING }
+            case FilteringMode.IgnoreExtendedRanges   => unsafe IO { JFilteringMode.IGNORE_EXTENDED_RANGES }
+            case FilteringMode.MapExtendedRanges      => unsafe IO { JFilteringMode.MAP_EXTENDED_RANGES }
+            case FilteringMode.RejectExtendedRanges   => unsafe IO { JFilteringMode.REJECT_EXTENDED_RANGES }
 
         }
 
@@ -107,14 +104,15 @@ mod Locale {
     ///
     /// Returns a new Locale for the supplied language.
     ///
-    pub def make(lang: String): Locale = Locale(unsafe IO { new JLocale(lang) })
+    pub def make(lang: String): Locale = 
+        Locale.Locale(unsafe IO { new JLocale(lang) })
 
 
     ///
     /// Returns a new Locale for the supplied language and country.
     ///
     pub def makeWithCountry(lang: {lang = String}, country: {country = String}): Locale =
-        Locale(unsafe IO { new JLocale(lang#lang, country#country) })
+        Locale.Locale(unsafe IO { new JLocale(lang#lang, country#country) })
 
     ///
     /// Returns a new Locale for the supplied language, country and variant.
@@ -125,13 +123,13 @@ mod Locale {
     /// For guidelines to the formatting of a valid tag see the Javadoc for `java.util.Locale`.
     /// 
     pub def makeLocaleWithVariant(lang: {lang = String}, country: {country = String}, variant: {variant = String}): Locale =
-        Locale(unsafe IO { new JLocale(lang#lang, country#country, variant#variant) })
+        Locale.Locale(unsafe IO { new JLocale(lang#lang, country#country, variant#variant) })
 
 
 
     pub def setJvmDefaultLocale(x: Locale): Result[String, Unit] \ IO =
         Result.tryCatch(_ -> {
-            let Locale(x1) = x;
+            let Locale.Locale(x1) = x;
             JLocale.setDefault(x1)
         })
 
@@ -140,7 +138,7 @@ mod Locale {
 
     pub def setJvmDefaultLocaleWithCategory(cat: LocaleCategory, x: Locale): Result[String, Unit] \ IO =
         Result.tryCatch(_ -> {
-            let Locale(x1) = x;
+            let Locale.Locale(x1) = x;
             let cat1 = localeCategoryToJava(cat);
             JLocale.setDefault(cat1, x1)
         })
@@ -152,148 +150,170 @@ mod Locale {
     /// 
     /// The root locale has empty string for country, language and variant.
     ///
-    pub def root(): Locale = Locale(unsafe IO { JLocale.ROOT })
+    pub def root(): Locale = 
+        Locale.Locale(unsafe IO { JLocale.ROOT })
 
     ///
     /// Returns the locale for country Canada with language English.
     /// 
-    pub def canada(): Locale = Locale(unsafe IO { JLocale.CANADA })
+    pub def canada(): Locale = 
+        Locale.Locale(unsafe IO { JLocale.CANADA })
 
     ///
     /// Returns the locale for country Canada with language French.
     /// 
-    pub def canada_french(): Locale = Locale(unsafe IO { JLocale.CANADA_FRENCH })
+    pub def canada_french(): Locale = 
+        Locale.Locale(unsafe IO { JLocale.CANADA_FRENCH })
 
-    pub def china(): Locale = Locale(unsafe IO { JLocale.CHINA })
+    pub def china(): Locale = 
+        Locale.Locale(unsafe IO { JLocale.CHINA })
 
-    pub def chinese(): Locale = Locale(unsafe IO { JLocale.CHINESE })
+    pub def chinese(): Locale = 
+        Locale.Locale(unsafe IO { JLocale.CHINESE })
 
-    pub def english(): Locale = Locale(unsafe IO { JLocale.ENGLISH })
+    pub def english(): Locale = 
+        Locale.Locale(unsafe IO { JLocale.ENGLISH })
 
-    pub def france(): Locale = Locale(unsafe IO { JLocale.FRANCE })
+    pub def france(): Locale = 
+        Locale.Locale(unsafe IO { JLocale.FRANCE })
 
-    pub def french(): Locale = Locale(unsafe IO { JLocale.FRENCH })
+    pub def french(): Locale = 
+        Locale.Locale(unsafe IO { JLocale.FRENCH })
 
-    pub def german(): Locale = Locale(unsafe IO { JLocale.GERMAN })
+    pub def german(): Locale = 
+        Locale.Locale(unsafe IO { JLocale.GERMAN })
 
-    pub def germany(): Locale = Locale(unsafe IO { JLocale.GERMANY })
+    pub def germany(): Locale = 
+        Locale.Locale(unsafe IO { JLocale.GERMANY })
 
-    pub def italian(): Locale = Locale(unsafe IO { JLocale.ITALIAN })
+    pub def italian(): Locale = 
+        Locale.Locale(unsafe IO { JLocale.ITALIAN })
 
-    pub def italy(): Locale = Locale(unsafe IO { JLocale.ITALY })
+    pub def italy(): Locale = 
+        Locale.Locale(unsafe IO { JLocale.ITALY })
 
-    pub def japan(): Locale = Locale(unsafe IO { JLocale.JAPAN })
+    pub def japan(): Locale = 
+        Locale.Locale(unsafe IO { JLocale.JAPAN })
 
-    pub def japanese(): Locale = Locale(unsafe IO { JLocale.JAPANESE })
+    pub def japanese(): Locale = 
+        Locale.Locale(unsafe IO { JLocale.JAPANESE })
 
-    pub def korea(): Locale = Locale(unsafe IO { JLocale.KOREA })
+    pub def korea(): Locale = 
+        Locale.Locale(unsafe IO { JLocale.KOREA })
 
-    pub def korean(): Locale = Locale(unsafe IO { JLocale.KOREAN })
+    pub def korean(): Locale = 
+        Locale.Locale(unsafe IO { JLocale.KOREAN })
 
-    pub def prc(): Locale = Locale(unsafe IO { JLocale.PRC })
+    pub def prc(): Locale = 
+        Locale.Locale(unsafe IO { JLocale.PRC })
 
-    pub def simplified_chinese(): Locale = Locale(unsafe IO { JLocale.SIMPLIFIED_CHINESE })
+    pub def simplified_chinese(): Locale = 
+        Locale.Locale(unsafe IO { JLocale.SIMPLIFIED_CHINESE })
 
-    pub def taiwan(): Locale = Locale(unsafe IO { JLocale.TAIWAN })
+    pub def taiwan(): Locale = 
+        Locale.Locale(unsafe IO { JLocale.TAIWAN })
 
-    pub def traditional_chinese(): Locale = Locale(unsafe IO { JLocale.TRADITIONAL_CHINESE })
+    pub def traditional_chinese(): Locale = 
+        Locale.Locale(unsafe IO { JLocale.TRADITIONAL_CHINESE })
 
-    pub def uk(): Locale = Locale(unsafe IO { JLocale.UK })
+    pub def uk(): Locale = 
+        Locale.Locale(unsafe IO { JLocale.UK })
 
-    pub def us(): Locale = Locale(unsafe IO { JLocale.US })
+    pub def us(): Locale = 
+        Locale.Locale(unsafe IO { JLocale.US })
 
     pub def getDefault(): Locale \ IO = 
-        checked_ecast(Locale(unsafe IO { JLocale.getDefault() }))
+        Locale.Locale(JLocale.getDefault())
 
     pub def getDefaultWithCategory(cat: LocaleCategory): Locale \ IO =
         let cat1 = localeCategoryToJava(cat);
-        checked_ecast(Locale(unsafe IO { JLocale.getDefault(cat1) }))
+        Locale.Locale(JLocale.getDefault(cat1))
 
     pub def getCountry(x: Locale): String =
-        let Locale(x1) = x;
+        let Locale.Locale(x1) = x;
         unsafe IO { x1.getCountry() }
 
     pub def getLanguage(x: Locale): String =
-        let Locale(x1) = x;
+        let Locale.Locale(x1) = x;
         unsafe IO { x1.getLanguage() }
 
     pub def getScript(x: Locale): String =
-        let Locale(x1) = x;
+        let Locale.Locale(x1) = x;
         unsafe IO { x1.getScript() }
 
     pub def getISO3Language(x: Locale): Result[String, String] =
         Result.tryCatch(_ -> {
-            let Locale(x1) = x;
+            let Locale.Locale(x1) = x;
             unsafe IO { x1.getISO3Language() }
         })
 
     pub def getDisplayCountry(x: Locale): String =
-        let Locale(x1) = x;
+        let Locale.Locale(x1) = x;
         unsafe IO { x1.getDisplayCountry() }
 
     pub def getDisplayCountryWithLocale(inLocale: {inLocale = Locale}, x: Locale): String =
-        let Locale(inLocale1) = inLocale#inLocale;
-        let Locale(x1) = x;
+        let Locale.Locale(inLocale1) = inLocale#inLocale;
+        let Locale.Locale(x1) = x;
         unsafe IO { x1.getDisplayCountry(inLocale1) }
 
     pub def getDisplayLanguage(x: Locale): String =
-        let Locale(x1) = x;
+        let Locale.Locale(x1) = x;
         unsafe IO { x1.getDisplayLanguage() }
 
     pub def getDisplayLanguageWithLocale(inLocale: {inLocale = Locale}, x: Locale): String =
-        let Locale(inLocale1) = inLocale#inLocale;
-        let Locale(x1) = x;
+        let Locale.Locale(inLocale1) = inLocale#inLocale;
+        let Locale.Locale(x1) = x;
         unsafe IO { x1.getDisplayLanguage(inLocale1) }
 
     pub def getDisplayName(x: Locale): String =
-        let Locale(x1) = x;
+        let Locale.Locale(x1) = x;
         unsafe IO { x1.getDisplayName() }
 
     pub def getDisplayNameWithLocale(inLocale: {inLocale = Locale}, x: Locale): String =
-        let Locale(inLocale1) = inLocale#inLocale;
-        let Locale(x1) = x;
+        let Locale.Locale(inLocale1) = inLocale#inLocale;
+        let Locale.Locale(x1) = x;
         unsafe IO { x1.getDisplayName(inLocale1) }
 
     pub def getDisplayScript(x: Locale): String =
-        let Locale(x1) = x;
+        let Locale.Locale(x1) = x;
         unsafe IO { x1.getDisplayScript() }
 
     pub def getDisplayScriptWithLocale(inLocale: {inLocale = Locale}, x: Locale): String =
-        let Locale(inLocale1) = inLocale#inLocale;
-        let Locale(x1) = x;
+        let Locale.Locale(inLocale1) = inLocale#inLocale;
+        let Locale.Locale(x1) = x;
         unsafe IO { x1.getDisplayScript(inLocale1) }
 
 
     pub def getDisplayVariant(x: Locale): String =
-        let Locale(x1) = x;
+        let Locale.Locale(x1) = x;
         unsafe IO { x1.getDisplayVariant() }
 
     pub def getDisplayVariantWithLocale(inLocale: {inLocale = Locale}, x: Locale): String =
-        let Locale(inLocale1) = inLocale#inLocale;
-        let Locale(x1) = x;
+        let Locale.Locale(inLocale1) = inLocale#inLocale;
+        let Locale.Locale(x1) = x;
         unsafe IO { x1.getDisplayVariant(inLocale1) }
 
     pub def hasExtensions(x: Locale): Bool =
-        let Locale(x1) = x;
+        let Locale.Locale(x1) = x;
         unsafe IO { x1.hasExtensions() }
 
     /// Produces a new Locale...
     pub def stripExtensions(x: Locale): Locale =
-        let Locale(x1) = x;
-        Locale(unsafe IO { x1.stripExtensions() })
+        let Locale.Locale(x1) = x;
+        Locale.Locale(unsafe IO { x1.stripExtensions() })
 
 
     pub def toLanguageTag(x: Locale): String =
-        let Locale(x1) = x;
+        let Locale.Locale(x1) = x;
         unsafe IO { x1.toLanguageTag() }
 
     pub def forLanguageTag(tag: String): Locale =
-        Locale(unsafe IO { JLocale.forLanguageTag(tag) })
+        Locale.Locale(unsafe IO { JLocale.forLanguageTag(tag) })
 
     pub def getAvailableLocales(): List[Locale] \ IO = region rc {
         let _ = Array#{} @ rc;
         let xs = JLocale.getAvailableLocales() |> Array.toList;
-        List.map(Locale, xs)
+        List.map(Locale.Locale, xs)
     }
 
     pub def getIsoCountries(): List[String] \ IO = region rc {
@@ -319,7 +339,7 @@ mod Locale {
 
     pub def getExtension(key: Char, x: Locale): Result[String, String] =
         Result.tryCatch(_ -> {
-            let Locale(x1) = x;
+            let Locale.Locale(x1) = x;
             let s = unsafe IO { x1.getExtension(key) };
             if (Object.isNull(s)) 
                 ""
@@ -329,7 +349,7 @@ mod Locale {
 
 
     pub def getExtensionKeys(x: Locale): Set[Char] =
-        let Locale(x1) = x;
+        let Locale.Locale(x1) = x;
         let keys = unsafe IO { x1.getExtensionKeys() };
         let chars: List[JCharacter] = fromSetAsList(keys);
         List.foldLeft((s, c) -> {let c1 = charFromJava(c); Set.insert(c1, s)}, Set.empty(), chars)
@@ -341,24 +361,24 @@ mod Locale {
     def charFromJava(c: JCharacter): Char = c.charValue()
 
     pub def getUnicodeLocaleAttributes(x: Locale): Set[String] = 
-        let Locale(x1) = x;
+        let Locale.Locale(x1) = x;
         unsafe IO { x1.getUnicodeLocaleAttributes() } |> Adaptor.fromSet
 
     pub def getUnicodeLocaleKeys(x: Locale): Set[String] = 
-        let Locale(x1) = x;
+        let Locale.Locale(x1) = x;
         unsafe IO { x1.getUnicodeLocaleKeys() } |> Adaptor.fromSet
 
     pub def lookup(priorityList: List[LanguageRange], locales: List[Locale]): Result[String, Option[Locale]] \ IO =
         Result.tryCatch(_ -> {
-            let ps1 = List.map(w -> {let LanguageRange(w1) = w; w1}, priorityList) |> Adaptor.toList;
-            let locs1 = List.map(w -> {let Locale(w1) = w; w1}, locales) |> Adaptor.toList;
-            JLocale.lookup(ps1, unchecked_cast(locs1 as JCollection)) |> Object.toOption |> Option.map(Locale)
+            let ps1 = List.map(w -> {let LanguageRange.LanguageRange(w1) = w; w1}, priorityList) |> Adaptor.toList;
+            let locs1 = List.map(w -> {let Locale.Locale(w1) = w; w1}, locales) |> Adaptor.toList;
+            JLocale.lookup(ps1, unchecked_cast(locs1 as JCollection)) |> Object.toOption |> Option.map(Locale.Locale)
         })
 
 
     pub def lookupTag(priorityList: List[LanguageRange], tags: List[String]): Result[String, Option[String]] \ IO =
         Result.tryCatch(_ -> {
-            let ps1 = List.map(w -> {let LanguageRange(w1) = w; w1}, priorityList) |> Adaptor.toList;
+            let ps1 = List.map(w -> {let LanguageRange.LanguageRange(w1) = w; w1}, priorityList) |> Adaptor.toList;
             let tags1 = unchecked_cast(Adaptor.toList(tags) as JCollection);
             JLocale.lookupTag(ps1, tags1) |> Object.toOption
         })
@@ -366,11 +386,11 @@ mod Locale {
 
     pub def filter(priorityList: List[LanguageRange], locales: List[Locale]): Result[String, List[Locale]] \ IO =
         Result.tryCatch(_ -> {
-            let ps1 = List.map(w -> {let LanguageRange(w1) = w; w1}, priorityList) |> Adaptor.toList;
-            let locs1 = List.map(w -> {let Locale(w1) = w; w1}, locales) |> Adaptor.toList;
+            let ps1 = List.map(w -> {let LanguageRange.LanguageRange(w1) = w; w1}, priorityList) |> Adaptor.toList;
+            let locs1 = List.map(w -> {let Locale.Locale(w1) = w; w1}, locales) |> Adaptor.toList;
             JLocale.filter(ps1, unchecked_cast(locs1 as JCollection)) 
                 |> Adaptor.fromList 
-                |> List.map(o -> Locale(o))
+                |> List.map(Locale.Locale)
         })
 
 
@@ -379,17 +399,17 @@ mod Locale {
                                     mode: FilteringMode, 
                                     locales: List[Locale]): Result[String, List[Locale]] \ IO = 
         Result.tryCatch(_ ->  {
-            let ps1 = List.map(w -> {let LanguageRange(w1) = w; w1}, priorityList) |> Adaptor.toList;
-            let locs1 = List.map(w -> {let Locale(w1) = w; w1}, locales) |> Adaptor.toList;
+            let ps1 = List.map(w -> {let LanguageRange.LanguageRange(w1) = w; w1}, priorityList) |> Adaptor.toList;
+            let locs1 = List.map(w -> {let Locale.Locale(w1) = w; w1}, locales) |> Adaptor.toList;
             let mode1 = filteringModeToJava(mode);
             JLocale.filter(ps1, unchecked_cast(locs1 as JCollection), mode1) 
                 |> Adaptor.fromList 
-                |> List.map(o -> Locale(o))
+                |> List.map(o -> Locale.Locale(o))
         })
 
     pub def filterTags(priorityList: List[LanguageRange], tags: List[String]): Result[String, List[String]] \ IO = 
         Result.tryCatch(_ -> {
-            let ps1 = List.map(w -> {let LanguageRange(w1) = w; w1}, priorityList) |> Adaptor.toList;
+            let ps1 = List.map(w -> {let LanguageRange.LanguageRange(w1) = w; w1}, priorityList) |> Adaptor.toList;
             let tags1 = unchecked_cast(Adaptor.toList(tags) as JCollection);
             JLocale.filterTags(ps1, tags1) |> Adaptor.fromList
         })
@@ -399,7 +419,7 @@ mod Locale {
                                         mode: FilteringMode, 
                                         tags: List[String]): Result[String, List[String]] \ IO = 
         Result.tryCatch(_ -> {
-            let ps1 = List.map(w -> {let LanguageRange(w1) = w; w1}, priorityList) |> Adaptor.toList;
+            let ps1 = List.map(w -> {let LanguageRange.LanguageRange(w1) = w; w1}, priorityList) |> Adaptor.toList;
             let tags1 = unchecked_cast(Adaptor.toList(tags) as JCollection);
             let mode1 = filteringModeToJava(mode);
             JLocale.filterTags(ps1, tags1, mode1) |> Adaptor.fromList

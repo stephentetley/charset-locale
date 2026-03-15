@@ -16,12 +16,18 @@
 
 mod TestLocaleBuilder {
 
-    @test
-    def run01(): Bool \ IO =
-        (run {
-            Locale.LocaleBuilder.setLanguage("en");        
-            Locale.LocaleBuilder.setRegion("US")
-        } with Locale.Builder.runWithIO) |> Result.isOk
+    use Assert.{assertEq}
+    use InteropLocale.Locale.Builder.LocaleBuilder
+
+    @Test
+    def run01(): Unit \ {Assert + IO} =
+        assertEq(
+            expected = true,
+            (run {
+                LocaleBuilder.setLanguage("en");
+                LocaleBuilder.setRegion("US")
+            } with InteropLocale.Locale.Builder.runWithIO) |> Result.isOk
+        )
 
 
 }
