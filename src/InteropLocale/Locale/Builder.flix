@@ -23,8 +23,7 @@ pub mod InteropLocale.Locale.Builder {
     use InteropLocale.Locale.Locale
 
     import java.util.{Locale$Builder => JLocaleBuilder}
-    import java.util.IllformedLocaleException
-    import java.lang.NullPointerException 
+    import java.lang.{Exception}
 
 
     pub eff LocaleBuilder {
@@ -55,102 +54,101 @@ pub mod InteropLocale.Locale.Builder {
     }
 
 
-    pub def handle(build: a -> b \ ef): a -> Result[IoError, Locale] \ ef - LocaleBuilder + IO =
-        let builder = unsafe IO { new JLocaleBuilder() };
-        x -> let ans = run {
-            Ok(build(x))
-        } with handler LocaleBuilder {
-            def clear(k) = {
-                builder.clear();
-                k()
-            }
-        
-            def clearExtensions(k) = {
-                builder.clearExtensions();
-                k()
-            }
+    // Probably can be pure...
+    pub def handle(f: a -> b \ ef): a -> Result[IoError, Locale] \ (ef - LocaleBuilder + IO) =
+        x -> {
+            let builder = new JLocaleBuilder();
+            let ans = run {
+                Ok(f(x))
+            } with handler LocaleBuilder {
+                def clear(k) = {
+                    builder.clear();
+                    k()
+                }
             
-            def addUnicodeLocaleAttribute(attr, k) = try {
-                builder.addUnicodeLocaleAttribute(attr);
-                k()
-            } catch {
-                case ex: IllformedLocaleException => Err(IoError(ErrorKind.InvalidInput, ex.getMessage()))
-                case ex: NullPointerException  => Err(IoError(ErrorKind.InvalidInput, ex.getMessage()))
+                def clearExtensions(k) = {
+                    builder.clearExtensions();
+                    k()
+                }
+                
+                def addUnicodeLocaleAttribute(attr, k) = try {
+                    builder.addUnicodeLocaleAttribute(attr);
+                    k()
+                } catch {
+                    case ex: Exception => Err(IoError(ErrorKind.InvalidInput, ex.getMessage()))
+                }
+                
+                def removeUnicodeLocaleAttribute(attr, k) = try {
+                    builder.removeUnicodeLocaleAttribute(attr);
+                    k()
+                } catch {
+                    case ex: Exception => Err(IoError(ErrorKind.InvalidInput, ex.getMessage()))
+                }
+
+                def setExtension(key, val, k) = try {
+                    builder.setExtension(key, val);
+                    k()
+                } catch {
+                    case ex: Exception => Err(IoError(ErrorKind.InvalidInput, ex.getMessage()))
+                }
+
+
+                def setLanguage(lang, k) = try {
+                    builder.setLanguage(lang);
+                    k()
+                } catch {
+                    case ex: Exception => Err(IoError(ErrorKind.InvalidInput, ex.getMessage()))
+                }
+
+                def setLanguageTag(tag, k) = try {
+                    builder.setLanguageTag(tag);
+                    k()
+                } catch {
+                    case ex: Exception => Err(IoError(ErrorKind.InvalidInput, ex.getMessage()))
+                }
+
+                def setLocale(loc, k) = try {
+                    let Locale.Locale(loc1) = loc;
+                    builder.setLocale(loc1);
+                    k()
+                } catch {
+                    case ex: Exception => Err(IoError(ErrorKind.InvalidInput, ex.getMessage()))
+                }
+
+                def setRegion(rgn, k) = try {
+                    builder.setRegion(rgn);
+                    k()
+                } catch {
+                    case ex: Exception => Err(IoError(ErrorKind.InvalidInput, ex.getMessage()))
+                }
+
+                def setScript(script, k) = try {
+                    builder.setScript(script);
+                    k()
+                } catch {
+                    case ex: Exception => Err(IoError(ErrorKind.InvalidInput, ex.getMessage()))
+                }
+
+                def setUnicodeLocaleKeyword(key, ty, k) = try {
+                    builder.setUnicodeLocaleKeyword(key, ty);
+                    k()
+                } catch {
+                    case ex: Exception => Err(IoError(ErrorKind.InvalidInput, ex.getMessage()))
+                }
+
+                def setVariant(variant, k) = try {
+                    builder.setVariant(variant);
+                    k()
+                } catch {
+                    case ex: Exception => Err(IoError(ErrorKind.InvalidInput, ex.getMessage()))
+                }
+
+
+            };
+            match ans {
+                case Ok(_)    => Ok(Locale.Locale(unsafe IO { builder.build() }))
+                case Err(msg) => Err(msg)
             }
-            
-            def removeUnicodeLocaleAttribute(attr, k) = try {
-                builder.removeUnicodeLocaleAttribute(attr);
-                k()
-            } catch {
-                case ex: IllformedLocaleException => Err(IoError(ErrorKind.InvalidInput, ex.getMessage()))
-                case ex: NullPointerException  => Err(IoError(ErrorKind.InvalidInput, ex.getMessage()))
-            }
-
-            def setExtension(key, val, k) = try {
-                builder.setExtension(key, val);
-                k()
-            } catch {
-                case ex: IllformedLocaleException => Err(IoError(ErrorKind.InvalidInput, ex.getMessage()))
-            }
-
-
-            def setLanguage(lang, k) = try {
-                builder.setLanguage(lang);
-                k()
-            } catch {
-                case ex: IllformedLocaleException => Err(IoError(ErrorKind.InvalidInput, ex.getMessage()))
-            }
-
-            def setLanguageTag(tag, k) = try {
-                builder.setLanguageTag(tag);
-                k()
-            } catch {
-                case ex: IllformedLocaleException => Err(IoError(ErrorKind.InvalidInput, ex.getMessage()))
-            }
-
-            def setLocale(loc, k) = try {
-                let Locale.Locale(loc1) = loc;
-                builder.setLocale(loc1);
-                k()
-            } catch {
-                case ex: IllformedLocaleException => Err(IoError(ErrorKind.InvalidInput, ex.getMessage()))
-                case ex: NullPointerException  => Err(IoError(ErrorKind.InvalidInput, ex.getMessage()))
-            }
-
-            def setRegion(rgn, k) = try {
-                builder.setRegion(rgn);
-                k()
-            } catch {
-                case ex: IllformedLocaleException => Err(IoError(ErrorKind.InvalidInput, ex.getMessage()))
-            }
-
-            def setScript(script, k) = try {
-                builder.setScript(script);
-                k()
-            } catch {
-                case ex: IllformedLocaleException => Err(IoError(ErrorKind.InvalidInput, ex.getMessage()))
-            }
-
-            def setUnicodeLocaleKeyword(key, ty, k) = try {
-                builder.setUnicodeLocaleKeyword(key, ty);
-                k()
-            } catch {
-                case ex: IllformedLocaleException => Err(IoError(ErrorKind.InvalidInput, ex.getMessage()))
-                case ex: NullPointerException  => Err(IoError(ErrorKind.InvalidInput, ex.getMessage()))
-            }
-
-            def setVariant(variant, k) = try {
-                builder.setVariant(variant);
-                k()
-            } catch {
-                case ex: IllformedLocaleException => Err(IoError(ErrorKind.InvalidInput, ex.getMessage()))
-            }
-
-
-        };
-        match ans {
-            case Ok(_)    => Ok(Locale.Locale(unsafe IO { builder.build() }))
-            case Err(msg) => Err(msg)
         }
 
     pub def runWithIO(buildfun: Unit -> a \ ef): Result[IoError, Locale] \ (ef - LocaleBuilder) + IO = 

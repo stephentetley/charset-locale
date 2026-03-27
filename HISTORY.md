@@ -1,3 +1,6 @@
+### v0.12.0
+   Updated to work with Flix 0.70.0 Java generics changes.
+
 ### v0.11.0
    Put modules in a top level namespace `InteropLocale`.
    Exposed modules as `pub` and pushed datatypes down one layer into their

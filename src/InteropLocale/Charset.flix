@@ -130,8 +130,9 @@ pub mod InteropLocale.Charset {
         unsafe IO { x1.aliases() } |> Adaptor.fromSet
 
 
-    pub def availableCharsets(): Map[String, Charset] \ IO = 
-        let m = unchecked_cast(JCharset.availableCharsets() as JMap);
-        m |> Adaptor.fromMap |> Map.map(Charset.Charset)
+    pub def availableCharsets(): Map[String, Charset] \ IO =
+        let m: JSortedMap[String, JCharset] = JCharset.availableCharsets();
+        let m1: JMap[String, JCharset] = checked_cast(m);
+        m1 |> Adaptor.fromMap |> Map.map(Charset.Charset)
 
 }
