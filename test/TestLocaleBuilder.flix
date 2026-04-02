@@ -20,7 +20,7 @@ mod TestLocaleBuilder {
     use InteropLocale.Locale.Builder.LocaleBuilder
 
     @Test
-    def run01(): Unit \ {Assert + IO} =
+    def run01(): Unit \ {Assert} =
         assertEq(
             expected = true,
             (run {

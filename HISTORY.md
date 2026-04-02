@@ -1,3 +1,6 @@
+### v0.13.0
+   Changed LocaleBuilder to use a region rather than IO effect.
+
 ### v0.12.0
    Updated to work with Flix 0.70.0 Java generics changes.
 
