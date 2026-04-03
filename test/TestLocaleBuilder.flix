@@ -26,7 +26,7 @@ mod TestLocaleBuilder {
             (run {
                 LocaleBuilder.setLanguage("en");
                 LocaleBuilder.setRegion("US")
-            } with InteropLocale.Locale.Builder.runWithIO) |> Result.isOk
+            } with InteropLocale.Locale.Builder.runDefault) |> Result.isOk
         )
 
 
