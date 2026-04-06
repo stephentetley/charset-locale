@@ -16,10 +16,8 @@
 
 
 
-pub mod InteropLocale.Locale.Builder {
+pub mod InteropLocale.LocaleBuilder {
 
-    use IoError.ErrorKind
-    use IoError.IoError
     use InteropLocale.Locale.Locale
 
     import java.util.{Locale$Builder => JLocaleBuilder}
@@ -54,9 +52,14 @@ pub mod InteropLocale.Locale.Builder {
         def setVariant(variant: String): Unit
     }
 
+    pub def handle(f: a -> b \ ef): a -> Result[String, (Locale, b)] \ (ef - LocaleBuilder) = x ->
+        region rc {
+            handleHelper(rc, f, x)
+        }
+
 
     // Use a region rather than IO...
-    pub def handle(_: Region[r], f: a -> b \ ef): a -> Result[String, (Locale, b)] \ (ef - LocaleBuilder + r) =
+    def handleHelper(_: Region[r], f: a -> b \ ef): a -> Result[String, (Locale, b)] \ (ef - LocaleBuilder + r) =
         x -> {
             let builder = unsafe IO { new JLocaleBuilder() };
             let ans = run {
@@ -154,10 +157,8 @@ pub mod InteropLocale.Locale.Builder {
             }
         }
 
-    pub def runDefault(buildfun: Unit -> a \ ef): Result[String, (Locale, a)] \ (ef - LocaleBuilder)  = 
-        region rc {
-            handle(rc, buildfun)()
-        }
+    pub def runLocaleBuilder(buildfun: Unit -> a \ ef): Result[String, (Locale, a)] \ (ef - LocaleBuilder)  = 
+        handle(buildfun)()
 
 
 

@@ -17,7 +17,7 @@
 mod TestLocaleBuilder {
 
     use Assert.{assertEq}
-    use InteropLocale.Locale.Builder.LocaleBuilder
+    use InteropLocale.LocaleBuilder.LocaleBuilder
 
     @Test
     def run01(): Unit \ {Assert} =
@@ -26,7 +26,7 @@ mod TestLocaleBuilder {
             (run {
                 LocaleBuilder.setLanguage("en");
                 LocaleBuilder.setRegion("US")
-            } with InteropLocale.Locale.Builder.runDefault) |> Result.isOk
+            } with InteropLocale.LocaleBuilder.runLocaleBuilder) |> Result.isOk
         )
 
 

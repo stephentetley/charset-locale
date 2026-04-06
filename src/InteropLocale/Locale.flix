@@ -17,11 +17,14 @@
 
 
 pub mod InteropLocale.Locale {
+    use InteropLocale.Locale.LanguageRange
 
 
     use InteropLocale.Locale.LanguageRange.LanguageRange
     
-    import java.util.{Locale => JLocale, Locale$Category => JCategory, 
+    import java.util.{Locale => JLocale} 
+    import java.util.{Locale$LanguageRange => JLanguageRange,
+                        Locale$Category => JCategory, 
                         Locale$FilteringMode => JFilteringMode, 
                         Locale$IsoCountryCode => JIsoCountryCode}
     import java.lang.{Character => JCharacter}
@@ -354,8 +357,10 @@ pub mod InteropLocale.Locale {
         let chars: List[JCharacter] = fromSetAsList(keys);
         List.foldLeft((s, c) -> {let c1 = charFromJava(c); Set.insert(c1, s)}, Set.empty(), chars)
     
-    def fromSetAsList(s: JSet): List[a] = region rc {
-        unsafe IO { s.iterator() } |> Adaptor.fromIterator(rc, (Proxy.Proxy: Proxy[a])) |> Iterator.toList
+    def fromSetAsList(s: JSet[a]): List[a] = region rc {
+        let javaIter = unsafe IO { s.iterator() };
+        let flixIter =  Adaptor.fromIterator(rc, (Proxy.Proxy: Proxy[a]), javaIter);
+        Iterator.toList(flixIter)
     }
 
     def charFromJava(c: JCharacter): Char = c.charValue()
@@ -368,61 +373,91 @@ pub mod InteropLocale.Locale {
         let Locale.Locale(x1) = x;
         unsafe IO { x1.getUnicodeLocaleKeys() } |> Adaptor.fromSet
 
-    pub def lookup(priorityList: List[LanguageRange], locales: List[Locale]): Result[String, Option[Locale]] \ IO =
+    def unwrapLanguageRange(w: LanguageRange): JLanguageRange = 
+        let LanguageRange.LanguageRange(w1) = w; 
+        w1
+    
+    def unwrapLocale(w: Locale): JLocale = 
+        let Locale.Locale(w1) = w; 
+        w1
+
+    // TODO - shouldn't need to be in IO
+    pub def lookup(priorities: List[LanguageRange], locales: List[Locale]): Result[String, Option[Locale]] \ IO =
         Result.tryCatch(_ -> {
-            let ps1 = List.map(w -> {let LanguageRange.LanguageRange(w1) = w; w1}, priorityList) |> Adaptor.toList;
-            let locs1 = List.map(w -> {let Locale.Locale(w1) = w; w1}, locales) |> Adaptor.toList;
-            JLocale.lookup(ps1, unchecked_cast(locs1 as JCollection)) |> Object.toOption |> Option.map(Locale.Locale)
+            let priorities1 = List.map(unwrapLanguageRange, priorities);
+            let javaPriorities: JList[JLanguageRange] = Adaptor.toList(priorities1);
+            let locales1 = List.map(unwrapLocale, locales);
+            let javaLocales: JList[JLocale] = Adaptor.toList(locales1);
+            let javaCollLocales = unchecked_cast(javaLocales as JCollection[JLocale]);
+            let javaAns = JLocale.lookup(javaPriorities, javaCollLocales);
+            let javaAns1: Option[JLocale] = Object.toOption(javaAns);
+            Option.map(Locale.Locale, javaAns1)
+        })
+
+    // TODO - shouldn't need to be in IO
+    pub def lookupTag(priorities: List[LanguageRange], tags: List[String]): Result[String, Option[String]] \ IO =
+        Result.tryCatch(_ -> {
+            let priorities1 = List.map(unwrapLanguageRange, priorities);
+            let javaPriorities: JList[JLanguageRange] = Adaptor.toList(priorities1);
+            let javaTags: JList[String] = Adaptor.toList(tags);
+            let javaTagsColl: JCollection[String] = checked_cast(javaTags);
+            let ans = JLocale.lookupTag(javaPriorities, javaTagsColl);
+            Object.toOption(ans)
         })
 
 
-    pub def lookupTag(priorityList: List[LanguageRange], tags: List[String]): Result[String, Option[String]] \ IO =
+    pub def filter(priorities: List[LanguageRange], locales: List[Locale]): Result[String, List[Locale]] \ IO =
         Result.tryCatch(_ -> {
-            let ps1 = List.map(w -> {let LanguageRange.LanguageRange(w1) = w; w1}, priorityList) |> Adaptor.toList;
-            let tags1 = unchecked_cast(Adaptor.toList(tags) as JCollection);
-            JLocale.lookupTag(ps1, tags1) |> Object.toOption
+            let priorities1 = List.map(unwrapLanguageRange, priorities);
+            let javaPriorities: JList[JLanguageRange] = Adaptor.toList(priorities1);
+            let locales1 = List.map(unwrapLocale, locales);
+            let javaLocales: JList[JLocale] = Adaptor.toList(locales1);
+            let javaCollLocales = unchecked_cast(javaLocales as JCollection[JLocale]);
+            let javaAns: JList[JLocale] = JLocale.filter(javaPriorities, javaCollLocales);
+            let ans1 = Adaptor.fromList(javaAns);
+            List.map(Locale.Locale, ans1)
         })
 
 
-    pub def filter(priorityList: List[LanguageRange], locales: List[Locale]): Result[String, List[Locale]] \ IO =
-        Result.tryCatch(_ -> {
-            let ps1 = List.map(w -> {let LanguageRange.LanguageRange(w1) = w; w1}, priorityList) |> Adaptor.toList;
-            let locs1 = List.map(w -> {let Locale.Locale(w1) = w; w1}, locales) |> Adaptor.toList;
-            JLocale.filter(ps1, unchecked_cast(locs1 as JCollection)) 
-                |> Adaptor.fromList 
-                |> List.map(Locale.Locale)
-        })
-
-
-
-    pub def filterWithFilteringMode(priorityList: List[LanguageRange], 
+    // TODO - shouldn't need to be in IO
+    pub def filterWithFilteringMode(priorities: List[LanguageRange], 
                                     mode: FilteringMode, 
                                     locales: List[Locale]): Result[String, List[Locale]] \ IO = 
         Result.tryCatch(_ ->  {
-            let ps1 = List.map(w -> {let LanguageRange.LanguageRange(w1) = w; w1}, priorityList) |> Adaptor.toList;
-            let locs1 = List.map(w -> {let Locale.Locale(w1) = w; w1}, locales) |> Adaptor.toList;
-            let mode1 = filteringModeToJava(mode);
-            JLocale.filter(ps1, unchecked_cast(locs1 as JCollection), mode1) 
-                |> Adaptor.fromList 
-                |> List.map(o -> Locale.Locale(o))
+            let priorites1 = List.map(unwrapLanguageRange, priorities);
+            let javaPriorities: JList[JLanguageRange] = Adaptor.toList(priorites1);
+            let locales1 = List.map(unwrapLocale, locales);
+            let javaLocales = Adaptor.toList(locales1);
+            let javaCollLocales = unchecked_cast(javaLocales as JCollection[JLocale]);
+            let javaMode = filteringModeToJava(mode);
+            let javaAns = JLocale.filter(javaPriorities, javaCollLocales, javaMode);
+            let ans1 = Adaptor.fromList(javaAns); 
+            List.map(Locale.Locale, ans1)
         })
 
-    pub def filterTags(priorityList: List[LanguageRange], tags: List[String]): Result[String, List[String]] \ IO = 
+    // TODO - shouldn't need to be in IO
+    pub def filterTags(priorities: List[LanguageRange], tags: List[String]): Result[String, List[String]] \ IO = 
         Result.tryCatch(_ -> {
-            let ps1 = List.map(w -> {let LanguageRange.LanguageRange(w1) = w; w1}, priorityList) |> Adaptor.toList;
-            let tags1 = unchecked_cast(Adaptor.toList(tags) as JCollection);
-            JLocale.filterTags(ps1, tags1) |> Adaptor.fromList
+            let priorities1 = List.map(unwrapLanguageRange, priorities);
+            let javaPriorities: JList[JLanguageRange] = Adaptor.toList(priorities1);
+            let javaTags: JList[String] = Adaptor.toList(tags);
+            let javaTagsColl: JCollection[String] = checked_cast(javaTags);
+            let ans: JList[String] = JLocale.filterTags(javaPriorities, javaTagsColl);
+            Adaptor.fromList(ans)
         })
 
-
-    pub def filterTagsWithFilteringMode(priorityList: List[LanguageRange], 
+    // TODO - shouldn't need to be in IO
+    pub def filterTagsWithFilteringMode(priorities: List[LanguageRange], 
                                         mode: FilteringMode, 
                                         tags: List[String]): Result[String, List[String]] \ IO = 
         Result.tryCatch(_ -> {
-            let ps1 = List.map(w -> {let LanguageRange.LanguageRange(w1) = w; w1}, priorityList) |> Adaptor.toList;
-            let tags1 = unchecked_cast(Adaptor.toList(tags) as JCollection);
-            let mode1 = filteringModeToJava(mode);
-            JLocale.filterTags(ps1, tags1, mode1) |> Adaptor.fromList
+            let priorities1 = List.map(unwrapLanguageRange, priorities);
+            let javaPriorities: JList[JLanguageRange] = Adaptor.toList(priorities1);
+            let javaTags: JList[String] = Adaptor.toList(tags);
+            let javaTagsColl: JCollection[String] = checked_cast(javaTags);
+            let javaMode = filteringModeToJava(mode);
+            let ans: JList[String] = JLocale.filterTags(javaPriorities, javaTagsColl, javaMode);
+            Adaptor.fromList(ans)
         })
 
 
