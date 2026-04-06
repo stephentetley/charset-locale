@@ -1,9 +1,7 @@
-### v0.14.0
+### v0.13.0
    Updated to work with Flix 0.71.0 - Java Generics changes.
    Moved and renamed `LocaleBuilder` so the efect name is 
    the same as the module name.
-   
-### v0.13.0
    Changed LocaleBuilder to use a region rather than IO effect.
 
 ### v0.12.0
