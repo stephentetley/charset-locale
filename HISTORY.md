@@ -1,8 +1,11 @@
+### v0.14.0
+   Updated to use "unsafe IO as r" syntax.
+   
 ### v0.13.0
    Updated to work with Flix 0.71.0 - Java Generics changes.
-   Moved and renamed `LocaleBuilder` so the efect name is 
-   the same as the module name.
-   Changed LocaleBuilder to use a region rather than IO effect.
+   Moved and renamed `LocaleBuilder` so the module name is the 
+   same as the effect name.
+   Changed `LocaleBuilder` to use a region rather than IO effect.
 
 ### v0.12.0
    Updated to work with Flix 0.70.0 Java generics changes.

@@ -65,46 +65,47 @@ pub mod InteropLocale.LocaleBuilder {
             let ans = run {
                 Ok(f(x))
             } with handler LocaleBuilder {
+                
                 def clear(k) = {
-                    unchecked_cast(discard builder.clear() as _ \ r);
+                    unsafe IO as r { discard builder.clear() };
                     k()
                 }
             
                 def clearExtensions(k) = {
-                    unchecked_cast(discard builder.clearExtensions() as _ \ r);
+                    unsafe IO as r { discard builder.clearExtensions() };
                     k()
                 }
                 
                 def addUnicodeLocaleAttribute(attr, k) = try {
-                    unchecked_cast(discard builder.addUnicodeLocaleAttribute(attr) as _ \r);
+                    unsafe IO as r { discard builder.addUnicodeLocaleAttribute(attr) };
                     k()
                 } catch {
                     case ex: Exception => Err(ex.getMessage())
                 }
                 
                 def removeUnicodeLocaleAttribute(attr, k) = try {
-                    unchecked_cast(discard builder.removeUnicodeLocaleAttribute(attr) as _ \ r);
+                    unsafe IO as r { discard builder.removeUnicodeLocaleAttribute(attr) };
                     k()
                 } catch {
                     case ex: Exception => Err(ex.getMessage())
                 }
 
                 def setExtension(key, val, k) = try {
-                    unchecked_cast(discard builder.setExtension(key, val) as _ \r);
+                    unsafe IO as r { discard builder.setExtension(key, val) };
                     k()
                 } catch {
                     case ex: Exception => Err(ex.getMessage())
                 }
 
                 def setLanguage(lang, k) = try {
-                    unchecked_cast(discard builder.setLanguage(lang) as _ \ r);
+                    unsafe IO as r { discard builder.setLanguage(lang) };
                     k()
                 } catch {
                     case ex: Exception => Err(ex.getMessage())
                 }
 
                 def setLanguageTag(tag, k) = try {
-                    unchecked_cast(discard builder.setLanguageTag(tag) as _ \ r);
+                    unsafe IO as r { discard builder.setLanguageTag(tag) };
                     k()
                 } catch {
                     case ex: Exception => Err(ex.getMessage())
@@ -112,35 +113,35 @@ pub mod InteropLocale.LocaleBuilder {
 
                 def setLocale(loc, k) = try {
                     let Locale.Locale(loc1) = loc;
-                    unchecked_cast(discard builder.setLocale(loc1) as _ \ r);
+                    unsafe IO as r { discard builder.setLocale(loc1) };
                     k()
                 } catch {
                     case ex: Exception => Err(ex.getMessage())
                 }
 
                 def setRegion(rgn, k) = try {
-                    unchecked_cast(discard builder.setRegion(rgn) as _ \ r);
+                    unsafe IO as r { discard builder.setRegion(rgn) };
                     k()
                 } catch {
                     case ex: Exception => Err(ex.getMessage())
                 }
 
                 def setScript(script, k) = try {
-                    unchecked_cast(discard builder.setScript(script) as _ \r);
+                    unsafe IO as r { discard builder.setScript(script) };
                     k()
                 } catch {
                     case ex: Exception => Err(ex.getMessage())
                 }
 
                 def setUnicodeLocaleKeyword(key, ty, k) = try {
-                    unchecked_cast(discard builder.setUnicodeLocaleKeyword(key, ty) as _ \ r);
+                    unsafe IO as r { discard builder.setUnicodeLocaleKeyword(key, ty) };
                     k()
                 } catch {
                     case ex: Exception => Err(ex.getMessage())
                 }
 
                 def setVariant(variant, k) = try {
-                    unchecked_cast(discard builder.setVariant(variant) as _ \ r);
+                    unsafe IO as r { discard builder.setVariant(variant) };
                     k()
                 } catch {
                     case ex: Exception => Err(ex.getMessage())
