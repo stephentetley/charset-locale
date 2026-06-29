@@ -21,6 +21,7 @@ pub mod InteropLocale.Locale.LanguageRange {
 
     import java.util.{Locale$LanguageRange => JLanguageRange}
     import java.util.{List => JList, Map => JMap}
+    import java.lang.{Exception => JException}
 
     ///
     /// Represents a LanguageRange.
@@ -50,9 +51,11 @@ pub mod InteropLocale.Locale.LanguageRange {
     /// Returns a new LanguageRange for the supplied `range`.
     ///
     pub def make(range: String): Result[String, LanguageRange] =
-        Result.tryCatch(_ -> {
-            LanguageRange.LanguageRange(unsafe IO { new JLanguageRange(range) })
-        })
+        try {
+            Ok(LanguageRange.LanguageRange(unsafe IO { new JLanguageRange(range) }))
+        } catch {
+            case e: JException => Err(e.getMessage())
+        }
 
 
     pub def maxWeight(): Float64 = unsafe IO { JLanguageRange.MAX_WEIGHT }
@@ -68,26 +71,38 @@ pub mod InteropLocale.Locale.LanguageRange {
         unsafe IO { x1.getWeight() }
 
     pub def parse(ranges: String): Result[String, List[LanguageRange]] = 
-        Result.tryCatch(_ -> {
-            unsafe IO { JLanguageRange.parse(ranges) } |> Adaptor.fromList |> List.map(LanguageRange.LanguageRange)
-        })
+        try {
+            unsafe IO { JLanguageRange.parse(ranges) } |> Adaptor.fromList |> List.map(LanguageRange.LanguageRange) |> Ok
+        } catch {
+            case e: JException => Err(e.getMessage())
+        }
 
 
     pub def parseWithCustomizations(ranges: String, 
                                     customizations: Map[String, List[String]]): Result[String, List[LanguageRange]] \ IO =
-        Result.tryCatch(_ -> {
+        try {
             let cust1 = Map.map(v -> Adaptor.toList(v), customizations);
             let cust2 = Adaptor.toMap(cust1);
-            unsafe IO { JLanguageRange.parse(ranges, cust2) } |> Adaptor.fromList |> List.map(LanguageRange.LanguageRange)
-        })
+            unsafe IO { JLanguageRange.parse(ranges, cust2) } 
+                |> Adaptor.fromList 
+                |> List.map(LanguageRange.LanguageRange) 
+                |> Ok
+        } catch {
+            case e: JException => Err(e.getMessage())
+        }
 
     pub def mapEquivalents(priorityList: List[LanguageRange], 
                             customizations: Map[String, List[String]]): Result[String, List[LanguageRange]] \ IO =
-        Result.tryCatch(_ -> {
+        try {
             let ps1 = List.map(w -> {let LanguageRange.LanguageRange(w1) = w; w1}, priorityList) |> Adaptor.toList;
             let cust1 = Map.map(v -> Adaptor.toList(v), customizations);
             let cust2 = Adaptor.toMap(cust1);
-            unsafe IO { JLanguageRange.mapEquivalents(ps1, cust2) } |> Adaptor.fromList |> List.map(LanguageRange.LanguageRange)
-        })
+            unsafe IO { JLanguageRange.mapEquivalents(ps1, cust2) } 
+                |> Adaptor.fromList 
+                |> List.map(LanguageRange.LanguageRange)
+                |> Ok
+        } catch {
+            case e: JException => Err(e.getMessage())
+        }
 
 }   

@@ -1,3 +1,6 @@
+### v0.15.0
+   Replaced `Result.tryCatch` with `try {...} catch {...}`.
+
 ### v0.14.0
    Updated to use "unsafe IO as r" syntax.
    

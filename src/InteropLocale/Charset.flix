@@ -23,6 +23,7 @@ pub mod InteropLocale.Charset {
     import java.nio.charset.{StandardCharsets}
     import java.util.{Map => JMap, SortedMap => JSortedMap, Set => JSet,
             Locale => JLocale}
+    import java.lang.{Exception => JException}
 
     ///
     /// Represents a Charset.
@@ -77,14 +78,18 @@ pub mod InteropLocale.Charset {
         Charset.Charset(unsafe IO { StandardCharsets.UTF_8 })
 
     pub def forName(name: String): Result[String, Charset] =
-        Result.tryCatch(_ -> {
-            Charset.Charset(unsafe IO { JCharset.forName(name) })
-        })
+        try {
+            Charset.Charset(unsafe IO { JCharset.forName(name) }) |> Ok
+        } catch {
+            case e: JException => Err(e.getMessage())
+        }
 
     pub def isSupported(name: String): Result[String, Bool] \ IO =
-        Result.tryCatch(_ -> {
-            JCharset.isSupported(name)
-        })
+        try {
+            Ok(JCharset.isSupported(name))
+        } catch {
+            case e: JException => Err(e.getMessage())
+        }
 
     /// 
     /// Returns the canonical name of Charset `c`.

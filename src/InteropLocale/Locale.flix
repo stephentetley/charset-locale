@@ -29,6 +29,7 @@ pub mod InteropLocale.Locale {
                         Locale$IsoCountryCode => JIsoCountryCode}
     import java.lang.{Character => JCharacter}
     import java.util.{Set => JSet, Iterator => JIterator, List => JList, Collection => JCollection}
+    import java.lang.{Exception => JException}
 
     ///
     /// Represents a Locale.
@@ -131,20 +132,24 @@ pub mod InteropLocale.Locale {
 
 
     pub def setJvmDefaultLocale(x: Locale): Result[String, Unit] \ IO =
-        Result.tryCatch(_ -> {
+        try {
             let Locale.Locale(x1) = x;
-            JLocale.setDefault(x1)
-        })
+            Ok(JLocale.setDefault(x1))
+        } catch {
+            case e: JException => Err(e.getMessage())
+        }
 
 
 
 
     pub def setJvmDefaultLocaleWithCategory(cat: LocaleCategory, x: Locale): Result[String, Unit] \ IO =
-        Result.tryCatch(_ -> {
+        try {
             let Locale.Locale(x1) = x;
             let cat1 = localeCategoryToJava(cat);
-            JLocale.setDefault(cat1, x1)
-        })
+            Ok(JLocale.setDefault(cat1, x1))
+        } catch {
+            case e: JException => Err(e.getMessage())
+        }
 
 
 
@@ -245,10 +250,12 @@ pub mod InteropLocale.Locale {
         unsafe IO { x1.getScript() }
 
     pub def getISO3Language(x: Locale): Result[String, String] =
-        Result.tryCatch(_ -> {
+        try {
             let Locale.Locale(x1) = x;
-            unsafe IO { x1.getISO3Language() }
-        })
+            unsafe IO { x1.getISO3Language() } |> Ok
+        } catch {
+            case e: JException => Err(e.getMessage())
+        }
 
     pub def getDisplayCountry(x: Locale): String =
         let Locale.Locale(x1) = x;
@@ -325,30 +332,37 @@ pub mod InteropLocale.Locale {
     }
 
     pub def getIsoCountriesWithIsoCountryCode(icc: IsoCountryCode): Result[String, Set[String]] \ IO & {~IO} =
-        Result.tryCatch(_ ->  {
+        try {
             let icc1 = isoCountryCodeToJava(icc);
             unsafe IO { JLocale.getISOCountries(icc1) }
                 |> Adaptor.fromSet
-        })
+                |> Ok
+        } catch {
+            case e: JException => Err(e.getMessage())
+        }
 
 
     pub def getIsoLanguages(): Result[String, List[String]] \ IO =
-        Result.tryCatch(_ -> {
+        try {
             region rc {
                 let _ = Array#{} @ rc;
-                unsafe IO { JLocale.getISOLanguages() } |> Array.toList
+                unsafe IO { JLocale.getISOLanguages() } |> Array.toList |> Ok
             }
-        })
+        } catch {
+            case e: JException => Err(e.getMessage())
+        }
 
     pub def getExtension(key: Char, x: Locale): Result[String, String] =
-        Result.tryCatch(_ -> {
+        try {
             let Locale.Locale(x1) = x;
             let s = unsafe IO { x1.getExtension(key) };
             if (Object.isNull(s)) 
-                ""
+                Ok("")
             else
-                s
-        })
+                Ok(s)
+        } catch {
+            case e: JException => Err(e.getMessage())
+        }
 
 
     pub def getExtensionKeys(x: Locale): Set[Char] =
@@ -383,7 +397,7 @@ pub mod InteropLocale.Locale {
 
     // TODO - shouldn't need to be in IO
     pub def lookup(priorities: List[LanguageRange], locales: List[Locale]): Result[String, Option[Locale]] \ IO =
-        Result.tryCatch(_ -> {
+        try {
             let priorities1 = List.map(unwrapLanguageRange, priorities);
             let javaPriorities: JList[JLanguageRange] = Adaptor.toList(priorities1);
             let locales1 = List.map(unwrapLocale, locales);
@@ -391,23 +405,27 @@ pub mod InteropLocale.Locale {
             let javaCollLocales = unchecked_cast(javaLocales as JCollection[JLocale]);
             let javaAns = JLocale.lookup(javaPriorities, javaCollLocales);
             let javaAns1: Option[JLocale] = Object.toOption(javaAns);
-            Option.map(Locale.Locale, javaAns1)
-        })
+            Option.map(Locale.Locale, javaAns1) |> Ok
+        } catch {
+            case e: JException => Err(e.getMessage())
+        }
 
     // TODO - shouldn't need to be in IO
     pub def lookupTag(priorities: List[LanguageRange], tags: List[String]): Result[String, Option[String]] \ IO =
-        Result.tryCatch(_ -> {
+        try {
             let priorities1 = List.map(unwrapLanguageRange, priorities);
             let javaPriorities: JList[JLanguageRange] = Adaptor.toList(priorities1);
             let javaTags: JList[String] = Adaptor.toList(tags);
             let javaTagsColl: JCollection[String] = checked_cast(javaTags);
             let ans = JLocale.lookupTag(javaPriorities, javaTagsColl);
-            Object.toOption(ans)
-        })
+            Object.toOption(ans) |> Ok
+        } catch {
+            case e: JException => Err(e.getMessage())
+        }
 
 
     pub def filter(priorities: List[LanguageRange], locales: List[Locale]): Result[String, List[Locale]] \ IO =
-        Result.tryCatch(_ -> {
+        try {
             let priorities1 = List.map(unwrapLanguageRange, priorities);
             let javaPriorities: JList[JLanguageRange] = Adaptor.toList(priorities1);
             let locales1 = List.map(unwrapLocale, locales);
@@ -415,15 +433,17 @@ pub mod InteropLocale.Locale {
             let javaCollLocales = unchecked_cast(javaLocales as JCollection[JLocale]);
             let javaAns: JList[JLocale] = JLocale.filter(javaPriorities, javaCollLocales);
             let ans1 = Adaptor.fromList(javaAns);
-            List.map(Locale.Locale, ans1)
-        })
+            List.map(Locale.Locale, ans1) |> Ok
+        } catch {
+            case e: JException => Err(e.getMessage())
+        }
 
 
     // TODO - shouldn't need to be in IO
     pub def filterWithFilteringMode(priorities: List[LanguageRange], 
                                     mode: FilteringMode, 
                                     locales: List[Locale]): Result[String, List[Locale]] \ IO = 
-        Result.tryCatch(_ ->  {
+        try {
             let priorites1 = List.map(unwrapLanguageRange, priorities);
             let javaPriorities: JList[JLanguageRange] = Adaptor.toList(priorites1);
             let locales1 = List.map(unwrapLocale, locales);
@@ -432,33 +452,39 @@ pub mod InteropLocale.Locale {
             let javaMode = filteringModeToJava(mode);
             let javaAns = JLocale.filter(javaPriorities, javaCollLocales, javaMode);
             let ans1 = Adaptor.fromList(javaAns); 
-            List.map(Locale.Locale, ans1)
-        })
+            List.map(Locale.Locale, ans1) |> Ok
+        }  catch {
+            case e: JException => Err(e.getMessage())
+        }
 
     // TODO - shouldn't need to be in IO
     pub def filterTags(priorities: List[LanguageRange], tags: List[String]): Result[String, List[String]] \ IO = 
-        Result.tryCatch(_ -> {
+        try {
             let priorities1 = List.map(unwrapLanguageRange, priorities);
             let javaPriorities: JList[JLanguageRange] = Adaptor.toList(priorities1);
             let javaTags: JList[String] = Adaptor.toList(tags);
             let javaTagsColl: JCollection[String] = checked_cast(javaTags);
             let ans: JList[String] = JLocale.filterTags(javaPriorities, javaTagsColl);
-            Adaptor.fromList(ans)
-        })
+            Ok(Adaptor.fromList(ans))
+        } catch {
+            case e: JException => Err(e.getMessage())
+        }
 
     // TODO - shouldn't need to be in IO
     pub def filterTagsWithFilteringMode(priorities: List[LanguageRange], 
                                         mode: FilteringMode, 
                                         tags: List[String]): Result[String, List[String]] \ IO = 
-        Result.tryCatch(_ -> {
+        try {
             let priorities1 = List.map(unwrapLanguageRange, priorities);
             let javaPriorities: JList[JLanguageRange] = Adaptor.toList(priorities1);
             let javaTags: JList[String] = Adaptor.toList(tags);
             let javaTagsColl: JCollection[String] = checked_cast(javaTags);
             let javaMode = filteringModeToJava(mode);
             let ans: JList[String] = JLocale.filterTags(javaPriorities, javaTagsColl, javaMode);
-            Adaptor.fromList(ans)
-        })
+            Adaptor.fromList(ans) |> Ok
+        }  catch {
+            case e: JException => Err(e.getMessage())
+        }
 
 
 }
