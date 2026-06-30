@@ -56,6 +56,18 @@ pub mod InteropLocale.Charset {
             unsafe IO { c1.hashCode() }
     }
 
+    instance ToJava[Charset] {
+        type Out = JCharset
+        pub def toJava(x: Charset): JCharset = 
+            let Charset.Charset(x1) = x;
+            x1
+    }
+
+    instance ToFlix[Charset] {
+        type In = JCharset
+        pub def toFlix(x: JCharset): Charset = Charset.Charset(x)
+    }
+    
     pub def defaultCharset(): Charset \ IO =
         Charset.Charset(JCharset.defaultCharset())
 

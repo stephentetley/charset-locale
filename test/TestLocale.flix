@@ -17,6 +17,7 @@
 mod TestLocale {
 
     use Assert.{assertEq}
+    import java.util.{Locale$Category => JLocaleCategory}
 
     @Test
     def make01(): Unit \ {Assert + IO} =
@@ -26,6 +27,39 @@ mod TestLocale {
                 let loc = InteropLocale.Locale.make("en");
                 println(loc);
                 true
+            }
+        )
+
+    @Test
+    def toFlixLocaleCategory01(): Unit \ {Assert} =
+        assertEq(
+            expected = true,
+            { 
+                let c1 = InteropLocale.Locale.LocaleCategory.Display;
+                let c2 = ToFlix.toFlix(unsafe IO { JLocaleCategory.DISPLAY });
+                c1 == c2
+            }
+        )
+
+    @Test
+    def toFlixLocaleCategory02(): Unit \ {Assert} =
+        assertEq(
+            expected = true,
+            { 
+                let c1 = InteropLocale.Locale.LocaleCategory.Format;
+                let c2 = ToFlix.toFlix(unsafe IO { JLocaleCategory.FORMAT });
+                c1 == c2
+            }
+        )
+
+    @Test
+    def toFlixLocaleCategory03(): Unit \ {Assert} =
+        assertEq(
+            expected = true,
+            { 
+                let c1 = InteropLocale.Locale.LocaleCategory.Display;
+                let c2 = ToFlix.toFlix(unsafe IO { JLocaleCategory.FORMAT });
+                c1 != c2
             }
         )
 

@@ -17,6 +17,7 @@
 
 
 pub mod InteropLocale.Locale {
+
     use InteropLocale.Locale.LanguageRange
 
 
@@ -55,6 +56,17 @@ pub mod InteropLocale.Locale {
             unsafe IO { x1.hashCode() }
     }
 
+    instance ToJava[Locale] {
+        type Out = JLocale
+        pub def toJava(x: Locale): JLocale = 
+            let Locale.Locale(x1) = x;
+            x1
+    }
+
+    instance ToFlix[Locale] {
+        type In = JLocale
+        pub def toFlix(x: JLocale): Locale = Locale.Locale(x)
+    }
 
     ///
     /// Locale categories.
@@ -64,11 +76,24 @@ pub mod InteropLocale.Locale {
         case Format
     }
 
-    def localeCategoryToJava(c: LocaleCategory): JCategory = 
-        match c {
+    instance ToJava[LocaleCategory] {
+        type Out = JCategory
+        pub def toJava(x: LocaleCategory): JCategory = match x {
             case LocaleCategory.Display => unsafe IO { JCategory.DISPLAY }
             case LocaleCategory.Format  => unsafe IO { JCategory.FORMAT }
         }
+    }
+
+    instance ToFlix[LocaleCategory] {
+        type In = JCategory
+        pub def toFlix(x: JCategory): LocaleCategory = unsafe IO {
+            if (x.equals(JCategory.DISPLAY))        LocaleCategory.Display
+            else if (x.equals(JCategory.FORMAT))    LocaleCategory.Format
+            else bug!("toFlix[LocaleCategory]")
+        }
+    }
+
+
 
     pub enum IsoCountryCode with Eq, Order, ToString {
         case Part1_Alpha2
@@ -76,12 +101,24 @@ pub mod InteropLocale.Locale {
         case Part3
     }
 
-    def isoCountryCodeToJava(c: IsoCountryCode): JIsoCountryCode = 
-        match c {
+    instance ToJava[IsoCountryCode] {
+        type Out = JIsoCountryCode
+        pub def toJava(x: IsoCountryCode): JIsoCountryCode = match x {
             case IsoCountryCode.Part1_Alpha2 => unsafe IO { JIsoCountryCode.PART1_ALPHA2 }
             case IsoCountryCode.Part1_Alpha3 => unsafe IO { JIsoCountryCode.PART1_ALPHA3 }
             case IsoCountryCode.Part3        => unsafe IO { JIsoCountryCode.PART3 }
         }
+    }
+
+    instance ToFlix[IsoCountryCode] {
+        type In = JIsoCountryCode
+        pub def toFlix(x: JIsoCountryCode): IsoCountryCode = unsafe IO {
+            if (x.equals(JIsoCountryCode.PART1_ALPHA2))         IsoCountryCode.Part1_Alpha2
+            else if (x.equals(JIsoCountryCode.PART1_ALPHA3))    IsoCountryCode.Part1_Alpha3
+            else if (x.equals(JIsoCountryCode.PART3))           IsoCountryCode.Part3
+            else bug!("toFlix[IsoCountryCode]")
+        }
+    }
 
     ///
     /// Filtering modes.
@@ -94,16 +131,28 @@ pub mod InteropLocale.Locale {
         case RejectExtendedRanges
     }
 
-    def filteringModeToJava(m: FilteringMode): JFilteringMode = 
-        match m {
+    instance ToJava[FilteringMode] {
+        type Out = JFilteringMode
+        pub def toJava(x: FilteringMode): JFilteringMode = match x {
             case FilteringMode.AutoselectFiltering    => unsafe IO { JFilteringMode.AUTOSELECT_FILTERING }
             case FilteringMode.ExtendedFiltering      => unsafe IO { JFilteringMode.EXTENDED_FILTERING }
             case FilteringMode.IgnoreExtendedRanges   => unsafe IO { JFilteringMode.IGNORE_EXTENDED_RANGES }
             case FilteringMode.MapExtendedRanges      => unsafe IO { JFilteringMode.MAP_EXTENDED_RANGES }
             case FilteringMode.RejectExtendedRanges   => unsafe IO { JFilteringMode.REJECT_EXTENDED_RANGES }
-
         }
+    }
 
+    instance ToFlix[FilteringMode] {
+        type In = JFilteringMode
+        pub def toFlix(x: JFilteringMode): FilteringMode = unsafe IO {
+            if (x.equals(JFilteringMode.AUTOSELECT_FILTERING))          FilteringMode.AutoselectFiltering
+            else if (x.equals(JFilteringMode.EXTENDED_FILTERING))       FilteringMode.ExtendedFiltering
+            else if (x.equals(JFilteringMode.IGNORE_EXTENDED_RANGES))   FilteringMode.IgnoreExtendedRanges
+            else if (x.equals(JFilteringMode.MAP_EXTENDED_RANGES))      FilteringMode.MapExtendedRanges
+            else if (x.equals(JFilteringMode.REJECT_EXTENDED_RANGES))   FilteringMode.RejectExtendedRanges
+            else bug!("toFlix[FilteringMode]")
+        }
+    }
 
     ///
     /// Returns a new Locale for the supplied language.
@@ -145,7 +194,7 @@ pub mod InteropLocale.Locale {
     pub def setJvmDefaultLocaleWithCategory(cat: LocaleCategory, x: Locale): Result[String, Unit] \ IO =
         try {
             let Locale.Locale(x1) = x;
-            let cat1 = localeCategoryToJava(cat);
+            let cat1 = ToJava.toJava(cat);
             Ok(JLocale.setDefault(cat1, x1))
         } catch {
             case e: JException => Err(e.getMessage())
@@ -234,7 +283,7 @@ pub mod InteropLocale.Locale {
         Locale.Locale(JLocale.getDefault())
 
     pub def getDefaultWithCategory(cat: LocaleCategory): Locale \ IO =
-        let cat1 = localeCategoryToJava(cat);
+        let cat1 = ToJava.toJava(cat);
         Locale.Locale(JLocale.getDefault(cat1))
 
     pub def getCountry(x: Locale): String =
@@ -333,7 +382,7 @@ pub mod InteropLocale.Locale {
 
     pub def getIsoCountriesWithIsoCountryCode(icc: IsoCountryCode): Result[String, Set[String]] \ IO & {~IO} =
         try {
-            let icc1 = isoCountryCodeToJava(icc);
+            let icc1 = ToJava.toJava(icc);
             unsafe IO { JLocale.getISOCountries(icc1) }
                 |> Adaptor.fromSet
                 |> Ok
@@ -449,7 +498,7 @@ pub mod InteropLocale.Locale {
             let locales1 = List.map(unwrapLocale, locales);
             let javaLocales = Adaptor.toList(locales1);
             let javaCollLocales = unchecked_cast(javaLocales as JCollection[JLocale]);
-            let javaMode = filteringModeToJava(mode);
+            let javaMode = ToJava.toJava(mode);
             let javaAns = JLocale.filter(javaPriorities, javaCollLocales, javaMode);
             let ans1 = Adaptor.fromList(javaAns); 
             List.map(Locale.Locale, ans1) |> Ok
@@ -479,7 +528,7 @@ pub mod InteropLocale.Locale {
             let javaPriorities: JList[JLanguageRange] = Adaptor.toList(priorities1);
             let javaTags: JList[String] = Adaptor.toList(tags);
             let javaTagsColl: JCollection[String] = checked_cast(javaTags);
-            let javaMode = filteringModeToJava(mode);
+            let javaMode = ToJava.toJava(mode);
             let ans: JList[String] = JLocale.filterTags(javaPriorities, javaTagsColl, javaMode);
             Adaptor.fromList(ans) |> Ok
         }  catch {

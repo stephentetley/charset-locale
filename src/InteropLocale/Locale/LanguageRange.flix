@@ -47,6 +47,18 @@ pub mod InteropLocale.Locale.LanguageRange {
             unsafe IO { x1.hashCode() }
     }
 
+    instance ToJava[LanguageRange] {
+        type Out = JLanguageRange
+        pub def toJava(x: LanguageRange): JLanguageRange = 
+            let LanguageRange.LanguageRange(x1) = x;
+            x1
+    }
+
+    instance ToFlix[LanguageRange] {
+        type In = JLanguageRange
+        pub def toFlix(x: JLanguageRange): LanguageRange = LanguageRange.LanguageRange(x)
+    }
+
     ///
     /// Returns a new LanguageRange for the supplied `range`.
     ///

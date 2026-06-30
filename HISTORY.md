@@ -1,7 +1,8 @@
 ### v0.15.0
-   Replaced `Result.tryCatch` with `try {...} catch {...}`.
+   Added `ToJava` and `ToFlix` instances.
 
 ### v0.14.0
+   Replaced `Result.tryCatch` with `try {...} catch {...}`.
    Updated to use "unsafe IO as r" syntax.
    
 ### v0.13.0
