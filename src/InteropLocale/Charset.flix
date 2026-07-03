@@ -126,7 +126,7 @@ pub mod InteropLocale.Charset {
     ///    
     pub def displayNameWithLocale(locale: Locale, c: Charset): String =
         let Charset.Charset(c1) = c;
-        let Locale.Locale(locale1) = locale;
+        let locale1 = ToJava.toJava(locale);
         unsafe IO { c1.displayName(locale1) }
 
     pub def isRegistered(c: Charset): Bool =
