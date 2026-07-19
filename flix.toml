@@ -6,4 +6,7 @@ flix        = "0.75.0"
 license     = "Apache-2.0"
 authors     = ["Stephen Tetley <stephen.tetley@gmail.com>"]
 
+[dependencies]
+"github:stephentetley/effect-extras" = { version = "0.2.0", security = "unrestricted" }
+
 

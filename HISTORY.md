@@ -1,3 +1,6 @@
+### v0.15.0
+   Reimplmented `LocaleBuilder` in a fluent API style.
+
 ### v0.14.1
    Added `ToJava` and `ToFlix` instances.
 

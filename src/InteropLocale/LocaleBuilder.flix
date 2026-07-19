@@ -18,6 +18,7 @@
 
 pub mod InteropLocale.LocaleBuilder {
 
+    use EffectExtras.Fail.Fail
     use InteropLocale.Locale.Locale
 
     import java.util.{Locale$Builder => JLocaleBuilder}
@@ -27,138 +28,207 @@ pub mod InteropLocale.LocaleBuilder {
 
     pub eff LocaleBuilder {
 
-        def clear(): Unit
+        def newLocaleBuilder(): State[<State.Open>]
 
-        def clearExtensions(): Unit
+        def clear(st: State[<State.Open>]): State[<State.Open>]
+
+        def clearExtensions(st: State[<State.Open>]): State[<State.Open>]
     
-        def addUnicodeLocaleAttribute(attr: String): Unit
+        def addUnicodeLocaleAttribute(attr: String, st: State[<State.Open>]): State[<State.Open>]
 
-        def removeUnicodeLocaleAttribute(attr: String): Unit
+        def removeUnicodeLocaleAttribute(attr: String, st: State[<State.Open>]): State[<State.Open>]
 
-        def setExtension(k: Char, v: String): Unit
+        def setExtension(k: Char, v: String, st: State[<State.Open>]): State[<State.Open>]
 
-        def setLanguage(lang: String): Unit
+        def setLanguage(lang: String, st: State[<State.Open>]): State[<State.Open>]
 
-        def setLanguageTag(tag: String): Unit
+        def setLanguageTag(tag: String, st: State[<State.Open>]): State[<State.Open>]
 
-        def setLocale(loc: Locale): Unit
+        def setLocale(loc: Locale, st: State[<State.Open>]): State[<State.Open>]
 
-        def setRegion(rgn: String): Unit
+        def setRegion(rgn: String, st: State[<State.Open>]): State[<State.Open>]
 
-        def setScript(script: String): Unit
+        def setScript(script: String, st: State[<State.Open>]): State[<State.Open>]
 
-        def setUnicodeLocaleKeyword(key: String, ty: String): Unit
+        def setUnicodeLocaleKeyword(key: String, ty: String, st: State[<State.Open>]): State[<State.Open>]
 
-        def setVariant(variant: String): Unit
+        def setVariant(variant: String, st: State[<State.Open>]): State[<State.Open>]
+
+        def build(st: State[<State.Open>]): State[<State.Closed>]
     }
 
-    pub def handle(f: a -> b \ ef): a -> Result[String, (Locale, b)] \ (ef - LocaleBuilder) = x -> {
-        let builder = unsafe IO { new JLocaleBuilder() };
+
+    restrictable enum State[i] {
+        case Open(JLocaleBuilder)
+        case Closed(JLocale)
+    }
+
+
+
+    def handle(f: a -> State[<State.Closed>] \ ef): a -> Result[String, Locale] \ (ef - LocaleBuilder - Fail) = x -> {
+        def getLocale(st) = 
+            choose st {
+                case State.Closed(jloc) => jloc
+            };
         let ans = run {
             Ok(f(x))
         } with handler LocaleBuilder {
-            
-            def clear(k) = {
-                unsafe IO as {ef - LocaleBuilder} { discard builder.clear() };
-                k()
+
+            def newLocaleBuilder(k) = {
+                let jbuilder = unsafe IO as {ef - LocaleBuilder} { new JLocaleBuilder() };
+                k(State.Open(jbuilder))
+            }
+
+
+            def clear(st, k) = choose st {
+                case State.Open(jbuilder) => {
+                    let jbuilder1 = unsafe IO as {ef - LocaleBuilder} { jbuilder.clear() };
+                    k(State.Open(jbuilder1))
+                }
             }
         
-            def clearExtensions(k) = {
-                unsafe IO as {ef - LocaleBuilder} { discard builder.clearExtensions() };
-                k()
+            def clearExtensions(st, k) = choose st {
+                case State.Open(jbuilder) => {
+                    let jbuilder1 = unsafe IO as {ef - LocaleBuilder} { jbuilder.clearExtensions() };
+                    k(State.Open(jbuilder1))
+                }
             }
             
-            def addUnicodeLocaleAttribute(attr, k) = 
+            def addUnicodeLocaleAttribute(attr, st, k) = 
                 try {
-                    unsafe IO as {ef - LocaleBuilder} { discard builder.addUnicodeLocaleAttribute(attr) };
-                    k()
+                    choose st {
+                        case State.Open(jbuilder) => {
+                            let jbuilder1 = unsafe IO as {ef - LocaleBuilder} { jbuilder.addUnicodeLocaleAttribute(attr) };
+                            k(State.Open(jbuilder1))
+                        }
+                    }
                 } catch {
-                    case ex: JException => Err(ex.getMessage())
+                    case ex: JException => Fail.report(ex.getMessage())
                 }
             
-            def removeUnicodeLocaleAttribute(attr, k) = 
+            def removeUnicodeLocaleAttribute(attr, st, k) = 
                 try {
-                    unsafe IO as {ef - LocaleBuilder} { discard builder.removeUnicodeLocaleAttribute(attr) };
-                    k()
+                    choose st {
+                        case State.Open(jbuilder) => {
+                            let jbuilder1 = unsafe IO as {ef - LocaleBuilder} { jbuilder.removeUnicodeLocaleAttribute(attr) };
+                            k(State.Open(jbuilder1))
+                        }
+                    }
                 } catch {
-                    case ex: JException => Err(ex.getMessage())
+                    case ex: JException => Fail.report(ex.getMessage())
                 }
 
-            def setExtension(key, val, k) = 
+            def setExtension(key, val, st, k) = 
                 try {
-                    unsafe IO as {ef - LocaleBuilder} { discard builder.setExtension(key, val) };
-                    k()
+                    choose st {
+                        case State.Open(jbuilder) => {
+                            let jbuilder1 = unsafe IO as {ef - LocaleBuilder} { jbuilder.setExtension(key, val) };
+                            k(State.Open(jbuilder1))
+                        }
+                    }
                 } catch {
-                    case ex: JException => Err(ex.getMessage())
+                    case ex: JException => Fail.report(ex.getMessage())
                 }
 
-            def setLanguage(lang, k) = 
+            def setLanguage(lang, st, k) = 
                 try {
-                    unsafe IO as {ef - LocaleBuilder} { discard builder.setLanguage(lang) };
-                    k()
+                    choose st {
+                        case State.Open(jbuilder) => {
+                            let jbuilder1 = unsafe IO as {ef - LocaleBuilder} { jbuilder.setLanguage(lang) };
+                            k(State.Open(jbuilder1))
+                        }
+                    }
                 } catch {
-                    case ex: JException => Err(ex.getMessage())
+                    case ex: JException => Fail.report(ex.getMessage())
                 }
 
-            def setLanguageTag(tag, k) = 
+            def setLanguageTag(tag, st, k) = 
                 try {
-                    unsafe IO as {ef - LocaleBuilder} { discard builder.setLanguageTag(tag) };
-                    k()
+                    choose st {
+                        case State.Open(jbuilder) => {
+                            let jbuilder1 = unsafe IO as {ef - LocaleBuilder} { jbuilder.setLanguageTag(tag) };
+                            k(State.Open(jbuilder1))
+                        }
+                    }
                 } catch {
-                    case ex: JException => Err(ex.getMessage())
+                    case ex: JException => Fail.report(ex.getMessage())
                 }
 
-            def setLocale(loc, k) = 
+            def setLocale(loc, st, k) = 
                 try {
-                    let Locale.Locale(loc1) = loc;
-                    unsafe IO as {ef - LocaleBuilder} { discard builder.setLocale(loc1) };
-                    k()
+                  choose st {
+                        case State.Open(jbuilder) => {
+                            let jloc1 = ToJava.toJava(loc);
+                            let jbuilder1 = unsafe IO as {ef - LocaleBuilder} { jbuilder.setLocale(jloc1) };
+                            k(State.Open(jbuilder1))
+                        }
+                    }
                 } catch {
-                    case ex: JException => Err(ex.getMessage())
+                    case ex: JException => Fail.report(ex.getMessage())
                 }
 
-            def setRegion(rgn, k) = 
+            def setRegion(rgn, st, k) = 
                 try {
-                    unsafe IO as {ef - LocaleBuilder} { discard builder.setRegion(rgn) };
-                    k()
+                    choose st {
+                        case State.Open(jbuilder) => {
+                            let jbuilder1 = unsafe IO as {ef - LocaleBuilder} { jbuilder.setRegion(rgn) };
+                            k(State.Open(jbuilder1))
+                        }
+                    }
                 } catch {
-                    case ex: JException => Err(ex.getMessage())
+                    case ex: JException => Fail.report(ex.getMessage())
                 }
 
-            def setScript(script, k) = 
+            def setScript(script, st, k) = 
                 try {
-                    unsafe IO as {ef - LocaleBuilder} { discard builder.setScript(script) };
-                    k()
+                    choose st {
+                        case State.Open(jbuilder) => {
+                            let jbuilder1 = unsafe IO as {ef - LocaleBuilder} { jbuilder.setScript(script) };
+                            k(State.Open(jbuilder1))
+                        }
+                    }
                 } catch {
-                    case ex: JException => Err(ex.getMessage())
+                    case ex: JException => Fail.report(ex.getMessage())
                 }
 
-            def setUnicodeLocaleKeyword(key, ty, k) = 
+            def setUnicodeLocaleKeyword(key, ty, st, k) = 
                 try {
-                    unsafe IO as {ef - LocaleBuilder} { discard builder.setUnicodeLocaleKeyword(key, ty) };
-                    k()
+                   choose st {
+                        case State.Open(jbuilder) => {
+                            let jbuilder1 = unsafe IO as {ef - LocaleBuilder} { jbuilder.setUnicodeLocaleKeyword(key, ty) };
+                            k(State.Open(jbuilder1))
+                        }
+                    }
                 } catch {
-                    case ex: JException => Err(ex.getMessage())
+                    case ex: JException => Fail.report(ex.getMessage())
                 }
 
-            def setVariant(variant, k) = 
+            def setVariant(variant, st, k) = 
                 try {
-                    unsafe IO as {ef - LocaleBuilder} { discard builder.setVariant(variant) };
-                    k()
+                   choose st {
+                        case State.Open(jbuilder) => {
+                            let jbuilder1 = unsafe IO as {ef - LocaleBuilder} { jbuilder.setVariant(variant) };
+                            k(State.Open(jbuilder1))
+                        }
+                    }
                 } catch {
-                    case ex: JException => Err(ex.getMessage())
+                    case ex: JException => Fail.report(ex.getMessage())
                 }
+
+            def build(st, k) = choose st {
+                case State.Open(jbuilder) => {
+                    let jloc = unsafe IO as {ef - LocaleBuilder} { jbuilder.build() };
+                    k(State.Closed(jloc))
+                }
+            }
+
+        } with handler Fail {
+            def report(s, _) = Err(s)
         };
-        match ans {
-            case Ok(ans1)    => { 
-                let jloc: JLocale = unsafe IO { builder.build() };
-                Ok((Locale.Locale(jloc), ans1))
-            }
-            case Err(msg) => Err(msg)
-        }
+        Result.map(getLocale >> ToFlix.toFlix, ans)
     }
 
-    pub def runLocaleBuilder(buildfun: Unit -> a \ ef): Result[String, (Locale, a)] \ (ef - LocaleBuilder)  = 
+    pub def runLocaleBuilder(buildfun: Unit -> State[<State.Closed>] \ ef): Result[String, Locale] \ (ef - LocaleBuilder - Fail)  = 
         handle(buildfun)()
 
 

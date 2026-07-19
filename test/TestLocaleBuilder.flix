@@ -15,19 +15,20 @@
  */
 
 mod TestLocaleBuilder {
+    use Assert.assertTrue
 
-    use Assert.{assertEq}
+    use Assert.{assertTrue}
     use InteropLocale.LocaleBuilder.LocaleBuilder
 
     @Test
     def run01(): Unit \ {Assert} =
-        assertEq(
-            expected = true,
-            (run {
-                LocaleBuilder.setLanguage("en");
-                LocaleBuilder.setRegion("US")
-            } with InteropLocale.LocaleBuilder.runLocaleBuilder) |> Result.isOk
-        )
+    let ans = InteropLocale.LocaleBuilder.runLocaleBuilder( 
+        LocaleBuilder.newLocaleBuilder >>
+        LocaleBuilder.setLanguage("en") >>
+        LocaleBuilder.setRegion("US") >>
+        LocaleBuilder.build
+    );
+    assertTrue(Result.isOk(ans))
 
 
 }
