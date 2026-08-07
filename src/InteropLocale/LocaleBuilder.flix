@@ -17,6 +17,9 @@
 
 
 pub mod InteropLocale.LocaleBuilder {
+    use InteropLocale.LocaleBuilder.setScript1
+    use InteropLocale.LocaleBuilder.setLanguage1
+    use InteropLocale.LocaleBuilder
 
     use EffectExtras.Fail.Fail
     use InteropLocale.Locale.Locale
@@ -24,6 +27,8 @@ pub mod InteropLocale.LocaleBuilder {
     import java.util.{Locale$Builder => JLocaleBuilder}
     import java.util.{Locale => JLocale}
     import java.lang.{Exception => JException}
+
+
 
 
     pub eff LocaleBuilder {
@@ -232,5 +237,73 @@ pub mod InteropLocale.LocaleBuilder {
         handle(buildfun)()
 
 
+    // The effect above only works when chained with (>>), e.g.
+    // >        LocaleBuilder.newLocaleBuilder >>
+    // >        LocaleBuilder.setLanguage("en") >>
+    // >        LocaleBuilder.setRegion("US") >>
+    // >        LocaleBuilder.build
+    //
+    // We are passing state but using a pointfree style to pretend 
+    // the state is hidden and we are deliberately avoiding a key 
+    // feature of effects - that we can bind variables in direct 
+    // style code. We don't want to bind variables because the answer 
+    // type of all our effective functions is `State[<State.Open>]` 
+    // which is leaking implementation details. Ideally the answer type 
+    // would be `Unit` - Applicative or Monadic code gives us this 
+    // answer type modulo it being wrapped by a type constructor. 
+
+
+    pub enum LocaleBuilder1[a: Type](JLocaleBuilder -> a)
+
+    instance Functor[LocaleBuilder1] {
+        pub def map(f: a -> b \ ef, x: LocaleBuilder1[a]): LocaleBuilder1[b] \ ef = 
+            unchecked_cast(LocaleBuilder1.LocaleBuilder1(jloc-> 
+                let LocaleBuilder1.LocaleBuilder1(xf) = x;
+                let ans = xf(jloc);
+                unchecked_cast(f(ans) as _ \ {})) as _ \ ef)
+    }
+
+    instance Applicative[LocaleBuilder1] {
+        pub def point(x: a): LocaleBuilder1[a] = 
+            LocaleBuilder1.LocaleBuilder1(_ -> x)
+        
+        pub def ap(f: LocaleBuilder1[a -> b \ ef], x: LocaleBuilder1[a]): LocaleBuilder1[b] \ ef = 
+            unchecked_cast(LocaleBuilder1.LocaleBuilder1(jloc-> 
+                let LocaleBuilder1.LocaleBuilder1(ff) = f;
+                let f2 = ff(jloc);
+                let LocaleBuilder1.LocaleBuilder1(xf) = x;
+                let ans = xf(jloc);
+                unchecked_cast(f2(ans) as _ \ {})) as _ \ ef)
+    }
+
+    pub def setScript1(script: String): LocaleBuilder1[Unit] = 
+        LocaleBuilder1.LocaleBuilder1(jbuild -> {
+            let _ = unsafe IO as {} { jbuild.setScript(script) };
+            ()
+        })
+
+    pub def setLanguage1(lang: String): LocaleBuilder1[Unit] = 
+        LocaleBuilder1.LocaleBuilder1(jbuild -> {
+            let _ = unsafe IO as {} { jbuild.setLanguage(lang) };
+            ()
+        })
+
+
+    // Using "seqRight" gives us point free chaining
+    pub def prgm1(): LocaleBuilder1[Unit] = 
+        use Applicative.{*>};
+        setLanguage1("ENG") *> setScript1("ENG")
+
+
+    // Using forA gives us binding if we must (because all the 
+    // operations return Unit there is nothing valuable to bind). 
+    // Note - if we don't care about binding we have have no need 
+    // for a Monad instance 
+    pub def prgm2(): LocaleBuilder1[Unit] = 
+        forA(_ <- setLanguage1("ENG");
+             _ <- setScript1("ENG")
+        ) yield()
+
 
 }
+
