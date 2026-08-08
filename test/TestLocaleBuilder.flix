@@ -20,14 +20,21 @@ mod TestLocaleBuilder {
     use Assert.{assertTrue}
     use InteropLocale.LocaleBuilder.LocaleBuilder
 
+    // Comparing Applicative builder to the original effect handler builder
+    // (rather than the state passing experiment)...
+    // I'm inclided to say the the effect handler builder wins out - semicolon
+    // works naturally as a delimiter between operations; we can ignore binding
+    // completely because the operations return Unit (don't even have to discard) 
+    // and it is arguably closer to common Flix which favours effect handlers over 
+    // monads / applicatives.
+
+
     @Test
     def run01(): Unit \ {Assert} =
-        let ans = InteropLocale.LocaleBuilder.runLocaleBuilder( 
-            LocaleBuilder.newLocaleBuilder >>
-            LocaleBuilder.setLanguage("en") >>
-            LocaleBuilder.setRegion("US") >>
-            LocaleBuilder.build
-        );
+        let ans = InteropLocale.LocaleBuilder.runLocaleBuilder(_ -> {
+            LocaleBuilder.setLanguage("en");
+            LocaleBuilder.setRegion("US")
+        });
         assertTrue(Result.isOk(ans))
 
     @Test
