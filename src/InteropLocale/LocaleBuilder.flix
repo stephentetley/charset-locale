@@ -254,41 +254,57 @@ pub mod InteropLocale.LocaleBuilder {
     // answer type modulo it being wrapped by a type constructor. 
 
     // TODO add failure
-    pub enum LocaleBuilder1[a: Type](JLocaleBuilder -> (JLocaleBuilder, a) \ IO)
+    pub enum LocaleBuilder1[a: Type](JLocaleBuilder -> Result[String, (JLocaleBuilder, a)] \ IO)
 
     instance Functor[LocaleBuilder1] {
         pub def map(f: a -> b \ ef, x: LocaleBuilder1[a]): LocaleBuilder1[b] \ ef = 
             unchecked_cast(LocaleBuilder1.LocaleBuilder1(jbuild-> 
                 let LocaleBuilder1.LocaleBuilder1(xf) = x;
-                let (jbuild1, a1) = xf(jbuild);
-                let a2 = unchecked_cast(f(a1) as _ \ IO);
-                (jbuild1, a2)) as _ \ ef)
+                match xf(jbuild) { 
+                    case Ok((jbuild1, a1)) => {
+                        let a2 = unchecked_cast(f(a1) as _ \ IO);
+                        Ok((jbuild1, a2))
+                    }
+                    case Err(msg) => Err(msg)
+                }) as _ \ ef)
     }
 
     instance Applicative[LocaleBuilder1] {
         pub def point(x: a): LocaleBuilder1[a] = 
-            LocaleBuilder1.LocaleBuilder1(jbuild -> checked_ecast((jbuild, x)))
+            LocaleBuilder1.LocaleBuilder1(jbuild -> checked_ecast(Ok((jbuild, x))))
         
         pub def ap(f: LocaleBuilder1[a -> b \ ef], x: LocaleBuilder1[a]): LocaleBuilder1[b] \ ef = 
             unchecked_cast(LocaleBuilder1.LocaleBuilder1(jbuild-> 
                 let LocaleBuilder1.LocaleBuilder1(ff) = f;
-                let (jbuild1, f2) = ff(jbuild);
-                let LocaleBuilder1.LocaleBuilder1(xf) = x;
-                let (jbuild2, a1) = xf(jbuild1);
-                let a2 = unchecked_cast(f2(a1) as _ \ IO);
-                (jbuild2, a2)) as _ \ ef)
+                match ff(jbuild) {
+                    case Ok((jbuild1, f2)) => {
+                        let LocaleBuilder1.LocaleBuilder1(xf) = x;
+                        match xf(jbuild1) {
+                            case Ok((jbuild2, a1)) => { 
+                                let a2 = unchecked_cast(f2(a1) as _ \ IO);
+                                Ok((jbuild2, a2))
+                            }
+                            case Err(msg) => Err(msg)
+                        }
+                    }
+                    case Err(msg) => Err(msg)
+                }) as _ \ ef)
     }
 
     pub def setScript1(script: String): LocaleBuilder1[Unit] = 
-        LocaleBuilder1.LocaleBuilder1(jbuild -> {
+        LocaleBuilder1.LocaleBuilder1(jbuild -> try {
             let jbuild1 =  jbuild.setScript(script) ;
-            (jbuild1, ())
+            Ok((jbuild1, ()))
+        } catch { 
+            case _: JException => Err("setScript(${script})")
         })
 
     pub def setLanguage1(lang: String): LocaleBuilder1[Unit] = 
-        LocaleBuilder1.LocaleBuilder1(jbuild -> {
+        LocaleBuilder1.LocaleBuilder1(jbuild -> try {
             let jbuild1 = jbuild.setLanguage(lang);
-            (jbuild1, ())
+            Ok((jbuild1, ()))
+        } catch { 
+            case _: JException => Err("setLanguage(${lang})")
         })
 
 
@@ -307,14 +323,21 @@ pub mod InteropLocale.LocaleBuilder {
              _ <- setScript1("ENG")
         ) yield()
 
-    pub def build1(x: LocaleBuilder1[a]): (Locale, a) = unsafe IO as {} {
+    pub def build1(x: LocaleBuilder1[a]): Result[String, (Locale, a)] = unsafe IO as {} {
         let jbuild =  new JLocaleBuilder() ;
         let LocaleBuilder1.LocaleBuilder1(f) = x;
-        let (jbuild1, a1) = f(jbuild);
-        let jloc: JLocale = jbuild1.build() ;
-        let jloc1 = ToFlix.toFlix(jloc);
-        (jloc1, a1)
+        match f(jbuild) { 
+            case Ok((jbuild1, a1)) => {
+                let jloc: JLocale = jbuild1.build() ;
+                let jloc1 = ToFlix.toFlix(jloc);
+                Ok((jloc1, a1))
+            }
+            case Err(msg) => Err(msg)
+        }
     }
     
+    pub def exec1(x: LocaleBuilder1[a]): Result[String, Locale] =
+        build1(x) |> Result.map(fst)
+
 }
 

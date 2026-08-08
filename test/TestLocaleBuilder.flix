@@ -33,9 +33,9 @@ mod TestLocaleBuilder {
     @Test
     def run02(): Unit \ {Assert} =
         use Applicative.{*>};
-        let (_, _) = InteropLocale.LocaleBuilder.build1( 
+        let ans = InteropLocale.LocaleBuilder.exec1( 
             InteropLocale.LocaleBuilder.setLanguage1("ENG") *> 
             InteropLocale.LocaleBuilder.setLanguage1("ENG")
         );
-    assertTrue(true)
+    assertTrue(Result.isOk(ans))
 }
