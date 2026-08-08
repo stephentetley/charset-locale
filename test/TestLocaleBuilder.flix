@@ -24,7 +24,7 @@ mod TestLocaleBuilder {
 
     @Test
     def run01(): Unit \ {Assert} =
-        let ans = InteropLocale.LocaleBuilder.runLocaleBuilder(_ -> {
+        let ans = InteropLocale.LocaleBuilder.execLocaleBuilderWithResult(_ -> {
             LocaleBuilder.setLanguage("en");
             LocaleBuilder.setRegion("US")
         });
