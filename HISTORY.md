@@ -1,3 +1,7 @@
+### v0.16.0
+   Reverted `LocaleBuilder` back to a simple effect handler that 
+   doesn't leak state in the API.
+
 ### v0.15.0
    Reimplmented `LocaleBuilder` in a fluent API style.
 
