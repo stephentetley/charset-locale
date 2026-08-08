@@ -22,13 +22,20 @@ mod TestLocaleBuilder {
 
     @Test
     def run01(): Unit \ {Assert} =
-    let ans = InteropLocale.LocaleBuilder.runLocaleBuilder( 
-        LocaleBuilder.newLocaleBuilder >>
-        LocaleBuilder.setLanguage("en") >>
-        LocaleBuilder.setRegion("US") >>
-        LocaleBuilder.build
-    );
-    assertTrue(Result.isOk(ans))
+        let ans = InteropLocale.LocaleBuilder.runLocaleBuilder( 
+            LocaleBuilder.newLocaleBuilder >>
+            LocaleBuilder.setLanguage("en") >>
+            LocaleBuilder.setRegion("US") >>
+            LocaleBuilder.build
+        );
+        assertTrue(Result.isOk(ans))
 
-
+    @Test
+    def run02(): Unit \ {Assert} =
+        use Applicative.{*>};
+        let (_, _) = InteropLocale.LocaleBuilder.build1( 
+            InteropLocale.LocaleBuilder.setLanguage1("ENG") *> 
+            InteropLocale.LocaleBuilder.setLanguage1("ENG")
+        );
+    assertTrue(true)
 }

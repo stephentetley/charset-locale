@@ -222,7 +222,7 @@ pub mod InteropLocale.LocaleBuilder {
 
             def build(st, k) = choose st {
                 case State.Open(jbuilder) => {
-                    let jloc = unsafe IO as {ef - LocaleBuilder} { jbuilder.build() };
+                    let jloc = unsafe IO as {ef - LocaleBuilder} { jbuilder.build()  };
                     k(State.Closed(jloc))
                 }
             }
@@ -236,6 +236,7 @@ pub mod InteropLocale.LocaleBuilder {
     pub def runLocaleBuilder(buildfun: Unit -> State[<State.Closed>] \ ef): Result[String, Locale] \ (ef - LocaleBuilder - Fail)  = 
         handle(buildfun)()
 
+    // Alternative ...
 
     // The effect above only works when chained with (>>), e.g.
     // >        LocaleBuilder.newLocaleBuilder >>
@@ -252,40 +253,42 @@ pub mod InteropLocale.LocaleBuilder {
     // would be `Unit` - Applicative or Monadic code gives us this 
     // answer type modulo it being wrapped by a type constructor. 
 
-
-    pub enum LocaleBuilder1[a: Type](JLocaleBuilder -> a)
+    // TODO add failure
+    pub enum LocaleBuilder1[a: Type](JLocaleBuilder -> (JLocaleBuilder, a) \ IO)
 
     instance Functor[LocaleBuilder1] {
         pub def map(f: a -> b \ ef, x: LocaleBuilder1[a]): LocaleBuilder1[b] \ ef = 
-            unchecked_cast(LocaleBuilder1.LocaleBuilder1(jloc-> 
+            unchecked_cast(LocaleBuilder1.LocaleBuilder1(jbuild-> 
                 let LocaleBuilder1.LocaleBuilder1(xf) = x;
-                let ans = xf(jloc);
-                unchecked_cast(f(ans) as _ \ {})) as _ \ ef)
+                let (jbuild1, a1) = xf(jbuild);
+                let a2 = unchecked_cast(f(a1) as _ \ IO);
+                (jbuild1, a2)) as _ \ ef)
     }
 
     instance Applicative[LocaleBuilder1] {
         pub def point(x: a): LocaleBuilder1[a] = 
-            LocaleBuilder1.LocaleBuilder1(_ -> x)
+            LocaleBuilder1.LocaleBuilder1(jbuild -> checked_ecast((jbuild, x)))
         
         pub def ap(f: LocaleBuilder1[a -> b \ ef], x: LocaleBuilder1[a]): LocaleBuilder1[b] \ ef = 
-            unchecked_cast(LocaleBuilder1.LocaleBuilder1(jloc-> 
+            unchecked_cast(LocaleBuilder1.LocaleBuilder1(jbuild-> 
                 let LocaleBuilder1.LocaleBuilder1(ff) = f;
-                let f2 = ff(jloc);
+                let (jbuild1, f2) = ff(jbuild);
                 let LocaleBuilder1.LocaleBuilder1(xf) = x;
-                let ans = xf(jloc);
-                unchecked_cast(f2(ans) as _ \ {})) as _ \ ef)
+                let (jbuild2, a1) = xf(jbuild1);
+                let a2 = unchecked_cast(f2(a1) as _ \ IO);
+                (jbuild2, a2)) as _ \ ef)
     }
 
     pub def setScript1(script: String): LocaleBuilder1[Unit] = 
         LocaleBuilder1.LocaleBuilder1(jbuild -> {
-            let _ = unsafe IO as {} { jbuild.setScript(script) };
-            ()
+            let jbuild1 =  jbuild.setScript(script) ;
+            (jbuild1, ())
         })
 
     pub def setLanguage1(lang: String): LocaleBuilder1[Unit] = 
         LocaleBuilder1.LocaleBuilder1(jbuild -> {
-            let _ = unsafe IO as {} { jbuild.setLanguage(lang) };
-            ()
+            let jbuild1 = jbuild.setLanguage(lang);
+            (jbuild1, ())
         })
 
 
@@ -304,6 +307,14 @@ pub mod InteropLocale.LocaleBuilder {
              _ <- setScript1("ENG")
         ) yield()
 
-
+    pub def build1(x: LocaleBuilder1[a]): (Locale, a) = unsafe IO as {} {
+        let jbuild =  new JLocaleBuilder() ;
+        let LocaleBuilder1.LocaleBuilder1(f) = x;
+        let (jbuild1, a1) = f(jbuild);
+        let jloc: JLocale = jbuild1.build() ;
+        let jloc1 = ToFlix.toFlix(jloc);
+        (jloc1, a1)
+    }
+    
 }
 
