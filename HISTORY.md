@@ -1,3 +1,6 @@
+### v0.16.1
+   Updated `effects-extras` dependency.
+      
 ### v0.16.0
    Reverted `LocaleBuilder` back to a simple effect handler that 
    doesn't leak state in the API.
