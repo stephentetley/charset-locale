@@ -1,12 +1,15 @@
+### v0.16.2
+   Updated `effect-extras` dependency.
+
 ### v0.16.1
-   Updated `effects-extras` dependency.
-      
+   Updated `effect-extras` dependency.
+
 ### v0.16.0
    Reverted `LocaleBuilder` back to a simple effect handler that 
    doesn't leak state in the API.
 
 ### v0.15.0
-   Reimplmented `LocaleBuilder` in a fluent API style.
+   Reimplemented `LocaleBuilder` in a fluent API style.
 
 ### v0.14.1
    Added `ToJava` and `ToFlix` instances.

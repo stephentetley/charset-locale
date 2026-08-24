@@ -65,7 +65,8 @@ pub mod InteropLocale.Locale {
 
     instance ToFlix[Locale] {
         type In = JLocale
-        pub def toFlix(x: JLocale): Locale = Locale.Locale(x)
+        pub def toFlix(x: JLocale): Locale =
+            Locale.Locale(x)
     }
 
     ///

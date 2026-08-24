@@ -1,12 +1,12 @@
 [package]
 name        = "charset-locale"
 description = "Flix wrappers for Charset and Locale from the JDK"
-version     = "0.16.1"
+version     = "0.16.2"
 flix        = "0.75.3"
 license     = "Apache-2.0"
 authors     = ["Stephen Tetley <stephen.tetley@gmail.com>"]
 
 [dependencies]
-"github:stephentetley/effect-extras" = { version = "0.4.0", security = "unrestricted" }
+"github:stephentetley/effect-extras" = { version = "0.4.1", security = "unrestricted" }
 
 
