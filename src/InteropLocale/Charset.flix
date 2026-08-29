@@ -17,7 +17,9 @@
 
 
 pub mod InteropLocale.Charset {
- 
+
+    use EffectExtras.Fail.Fail
+
     use InteropLocale.Locale.{Locale}
     import java.nio.charset.{Charset => JCharset}
     import java.nio.charset.{StandardCharsets}
@@ -89,18 +91,18 @@ pub mod InteropLocale.Charset {
     pub def utf_8(): Charset =
         Charset.Charset(unsafe IO { StandardCharsets.UTF_8 })
 
-    pub def forName(name: String): Result[String, Charset] =
+    pub def forName(name: String): Charset \ Fail =
         try {
-            Charset.Charset(unsafe IO { JCharset.forName(name) }) |> Ok
+            Charset.Charset(unsafe IO { JCharset.forName(name) })
         } catch {
-            case e: JException => Err(e.getMessage())
+            case ex: JException => Fail.report(ex.getMessage())
         }
 
-    pub def isSupported(name: String): Result[String, Bool] \ IO =
+    pub def isSupported(name: String): Bool \ IO  + Fail =
         try {
-            Ok(JCharset.isSupported(name))
+            JCharset.isSupported(name)
         } catch {
-            case e: JException => Err(e.getMessage())
+            case ex: JException => Fail.report(ex.getMessage())
         }
 
     /// 

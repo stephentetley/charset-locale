@@ -1,5 +1,6 @@
 ### v0.17.0
-   Constructors now use a "newX" naming scheme and use the `Fail` effect for failure
+   Constructors now use a "newX" naming scheme and use the `Fail` effect for failure.
+   Errors changed from `Result[String, ...]` to using the `Fail` effect.
 
 ### v0.16.3
    Updated `effect-extras` dependency.

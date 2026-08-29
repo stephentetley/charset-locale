@@ -83,29 +83,28 @@ pub mod InteropLocale.Locale.LanguageRange {
         let LanguageRange.LanguageRange(x1) = x;
         unsafe IO { x1.getWeight() }
 
-    pub def parse(ranges: String): Result[String, List[LanguageRange]] = 
+    pub def parse(ranges: String): List[LanguageRange] \ Fail = 
         try {
-            unsafe IO { JLanguageRange.parse(ranges) } |> Adaptor.fromList |> List.map(LanguageRange.LanguageRange) |> Ok
+            unsafe IO { JLanguageRange.parse(ranges) } |> Adaptor.fromList |> List.map(LanguageRange.LanguageRange)
         } catch {
-            case e: JException => Err(e.getMessage())
+            case ex: JException => Fail.report(ex.getMessage())
         }
 
 
     pub def parseWithCustomizations(ranges: String, 
-                                    customizations: Map[String, List[String]]): Result[String, List[LanguageRange]] \ IO =
+                                    customizations: Map[String, List[String]]): List[LanguageRange] \ IO + Fail =
         try {
             let cust1 = Map.map(v -> Adaptor.toList(v), customizations);
             let cust2 = Adaptor.toMap(cust1);
             unsafe IO { JLanguageRange.parse(ranges, cust2) } 
                 |> Adaptor.fromList 
                 |> List.map(LanguageRange.LanguageRange) 
-                |> Ok
         } catch {
-            case e: JException => Err(e.getMessage())
+            case ex: JException => Fail.report(ex.getMessage())
         }
 
     pub def mapEquivalents(priorityList: List[LanguageRange], 
-                            customizations: Map[String, List[String]]): Result[String, List[LanguageRange]] \ IO =
+                            customizations: Map[String, List[String]]): List[LanguageRange] \ IO + Fail =
         try {
             let ps1 = List.map(w -> {let LanguageRange.LanguageRange(w1) = w; w1}, priorityList) |> Adaptor.toList;
             let cust1 = Map.map(v -> Adaptor.toList(v), customizations);
@@ -113,9 +112,8 @@ pub mod InteropLocale.Locale.LanguageRange {
             unsafe IO { JLanguageRange.mapEquivalents(ps1, cust2) } 
                 |> Adaptor.fromList 
                 |> List.map(LanguageRange.LanguageRange)
-                |> Ok
         } catch {
-            case e: JException => Err(e.getMessage())
+            case ex: JException => Fail.report(ex.getMessage())
         }
 
 }   
