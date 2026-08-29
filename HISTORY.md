@@ -1,3 +1,6 @@
+### v0.17.0
+   Constructors now use a "newX" naming scheme and use the `Fail` effect for failure
+
 ### v0.16.3
    Updated `effect-extras` dependency.
 

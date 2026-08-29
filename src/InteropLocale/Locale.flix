@@ -18,6 +18,7 @@
 
 pub mod InteropLocale.Locale {
 
+    use EffectExtras.Fail.Fail
     use InteropLocale.Locale.LanguageRange
 
 
@@ -156,17 +157,19 @@ pub mod InteropLocale.Locale {
     }
 
     ///
-    /// Returns a new Locale for the supplied language.
+    /// Returns a new Locale for the supplied language tag.
     ///
-    pub def make(lang: String): Locale = 
-        Locale.Locale(unsafe IO { new JLocale(lang) })
+    /// See JDK javadoc for `Locale.forLanguageTag`
+    ///
+    pub def newLocale(langTag: String): Locale \ Fail = 
+        try {
+            Locale.Locale(unsafe IO { JLocale.forLanguageTag(langTag) })
+        } catch {
+            case ex: JException => Fail.report(ex.getMessage())
+        }
 
 
-    ///
-    /// Returns a new Locale for the supplied language and country.
-    ///
-    pub def makeWithCountry(lang: {lang = String}, country: {country = String}): Locale =
-        Locale.Locale(unsafe IO { new JLocale(lang#lang, country#country) })
+
 
     ///
     /// Returns a new Locale for the supplied language, country and variant.
@@ -176,9 +179,12 @@ pub mod InteropLocale.Locale {
     ///
     /// For guidelines to the formatting of a valid tag see the Javadoc for `java.util.Locale`.
     /// 
-    pub def makeLocaleWithVariant(lang: {lang = String}, country: {country = String}, variant: {variant = String}): Locale =
-        Locale.Locale(unsafe IO { new JLocale(lang#lang, country#country, variant#variant) })
-
+    pub def newLocaleWithVariant(lang: {lang = String}, country: {country = String}, variant: {variant = String}): Locale \ Fail =
+        try {
+            Locale.Locale(unsafe IO { JLocale.of(lang#lang, country#country, variant#variant) })
+        } catch {
+            case ex: JException => Fail.report(ex.getMessage())
+        }
 
 
     pub def setJvmDefaultLocale(x: Locale): Result[String, Unit] \ IO =
@@ -366,9 +372,6 @@ pub mod InteropLocale.Locale {
     pub def toLanguageTag(x: Locale): String =
         let Locale.Locale(x1) = x;
         unsafe IO { x1.toLanguageTag() }
-
-    pub def forLanguageTag(tag: String): Locale =
-        Locale.Locale(unsafe IO { JLocale.forLanguageTag(tag) })
 
     pub def getAvailableLocales(): List[Locale] \ IO = region rc {
         let _ = Array#{} @ rc;

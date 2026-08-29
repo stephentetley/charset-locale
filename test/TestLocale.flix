@@ -17,14 +17,16 @@
 mod TestLocale {
 
     use Assert.{assertEq}
+    use EffectExtras.Fail.Fail
+
     import java.util.{Locale$Category => JLocaleCategory}
 
     @Test
-    def make01(): Unit \ {Assert + IO} =
+    def make01(): Unit \ {Assert + IO + Fail} =
         assertEq(
             expected = true,
             { 
-                let loc = InteropLocale.Locale.make("en");
+                let loc = InteropLocale.Locale.newLocale("en");
                 println(loc);
                 true
             }

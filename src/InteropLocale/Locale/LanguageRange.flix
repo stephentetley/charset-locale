@@ -18,6 +18,7 @@
 
 pub mod InteropLocale.Locale.LanguageRange {
 
+    use EffectExtras.Fail.Fail
 
     import java.util.{Locale$LanguageRange => JLanguageRange}
     import java.util.{List => JList, Map => JMap}
@@ -62,11 +63,11 @@ pub mod InteropLocale.Locale.LanguageRange {
     ///
     /// Returns a new LanguageRange for the supplied `range`.
     ///
-    pub def make(range: String): Result[String, LanguageRange] =
+    pub def newLanguageRange(range: String): LanguageRange \ Fail =
         try {
-            Ok(LanguageRange.LanguageRange(unsafe IO { new JLanguageRange(range) }))
+            LanguageRange.LanguageRange(unsafe IO { new JLanguageRange(range) })
         } catch {
-            case e: JException => Err(e.getMessage())
+            case ex: JException => Fail.report(ex.getMessage())
         }
 
 
