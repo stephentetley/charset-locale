@@ -1,3 +1,6 @@
+### v0.16.3
+   Updated `effect-extras` dependency.
+
 ### v0.16.2
    Updated `effect-extras` dependency.
 
