@@ -17,20 +17,19 @@
 mod TestLocale {
 
     use Assert.{assertEq}
-    use EffectExtras.Fail.Fail
+    use ee::EffectExtras
+    use ee::EffectExtras.Fail.Fail
 
     import java.util.{Locale$Category => JLocaleCategory}
 
     @Test
-    def make01(): Unit \ {Assert + IO + Fail} =
-        assertEq(
-            expected = true,
-            { 
-                let loc = InteropLocale.Locale.newLocale("en");
-                println(loc);
-                true
-            }
-        )
+    def make01(): Unit \ {Assert + IO} - Fail[String] =
+        let ans = run {
+            let loc = InteropLocale.Locale.newLocale("en");
+            println(loc);
+            true
+        } with EffectExtras.Fail.runWithResult;
+        assertEq(expected = Ok(true), ans)
 
     @Test
     def toFlixLocaleCategory01(): Unit \ {Assert} =

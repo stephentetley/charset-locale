@@ -18,7 +18,7 @@
 
 pub mod InteropLocale.Locale.LanguageRange {
 
-    use EffectExtras.Fail.Fail
+    use ee::EffectExtras.Fail.Fail
 
     import java.util.{Locale$LanguageRange => JLanguageRange}
     import java.util.{List => JList, Map => JMap}
@@ -63,7 +63,7 @@ pub mod InteropLocale.Locale.LanguageRange {
     ///
     /// Returns a new LanguageRange for the supplied `range`.
     ///
-    pub def newLanguageRange(range: String): LanguageRange \ Fail =
+    pub def newLanguageRange(range: String): LanguageRange \ Fail[String] =
         try {
             LanguageRange.LanguageRange(unsafe IO { new JLanguageRange(range) })
         } catch {
@@ -83,7 +83,7 @@ pub mod InteropLocale.Locale.LanguageRange {
         let LanguageRange.LanguageRange(x1) = x;
         unsafe IO { x1.getWeight() }
 
-    pub def parse(ranges: String): List[LanguageRange] \ Fail = 
+    pub def parse(ranges: String): List[LanguageRange] \ Fail[String] = 
         try {
             unsafe IO { JLanguageRange.parse(ranges) } |> Adaptor.fromList |> List.map(LanguageRange.LanguageRange)
         } catch {
@@ -92,7 +92,7 @@ pub mod InteropLocale.Locale.LanguageRange {
 
 
     pub def parseWithCustomizations(ranges: String, 
-                                    customizations: Map[String, List[String]]): List[LanguageRange] \ IO + Fail =
+                                    customizations: Map[String, List[String]]): List[LanguageRange] \ IO + Fail[String] =
         try {
             let cust1 = Map.map(v -> Adaptor.toList(v), customizations);
             let cust2 = Adaptor.toMap(cust1);
@@ -104,7 +104,7 @@ pub mod InteropLocale.Locale.LanguageRange {
         }
 
     pub def mapEquivalents(priorityList: List[LanguageRange], 
-                            customizations: Map[String, List[String]]): List[LanguageRange] \ IO + Fail =
+                            customizations: Map[String, List[String]]): List[LanguageRange] \ IO + Fail[String] =
         try {
             let ps1 = List.map(w -> {let LanguageRange.LanguageRange(w1) = w; w1}, priorityList) |> Adaptor.toList;
             let cust1 = Map.map(v -> Adaptor.toList(v), customizations);

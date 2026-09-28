@@ -18,7 +18,7 @@
 
 pub mod InteropLocale.Locale {
 
-    use EffectExtras.Fail.Fail
+    use ee::EffectExtras.Fail.Fail
     use InteropLocale.Locale.LanguageRange
 
 
@@ -161,7 +161,7 @@ pub mod InteropLocale.Locale {
     ///
     /// See JDK javadoc for `Locale.forLanguageTag`
     ///
-    pub def newLocale(langTag: String): Locale \ Fail = 
+    pub def newLocale(langTag: String): Locale \ Fail[String] = 
         try {
             Locale.Locale(unsafe IO { JLocale.forLanguageTag(langTag) })
         } catch {
@@ -179,7 +179,7 @@ pub mod InteropLocale.Locale {
     ///
     /// For guidelines to the formatting of a valid tag see the Javadoc for `java.util.Locale`.
     /// 
-    pub def newLocaleWithVariant(lang: {lang = String}, country: {country = String}, variant: {variant = String}): Locale \ Fail =
+    pub def newLocaleWithVariant(lang: {lang = String}, country: {country = String}, variant: {variant = String}): Locale \ Fail[String] =
         try {
             Locale.Locale(unsafe IO { JLocale.of(lang#lang, country#country, variant#variant) })
         } catch {
@@ -187,7 +187,7 @@ pub mod InteropLocale.Locale {
         }
 
 
-    pub def setJvmDefaultLocale(x: Locale): Unit \ IO + Fail =
+    pub def setJvmDefaultLocale(x: Locale): Unit \ IO + Fail[String] =
         try {
             let Locale.Locale(x1) = x;
             JLocale.setDefault(x1)
@@ -198,7 +198,7 @@ pub mod InteropLocale.Locale {
 
 
 
-    pub def setJvmDefaultLocaleWithCategory(cat: LocaleCategory, x: Locale): Unit \ IO + Fail =
+    pub def setJvmDefaultLocaleWithCategory(cat: LocaleCategory, x: Locale): Unit \ IO + Fail[String] =
         try {
             let Locale.Locale(x1) = x;
             let cat1 = ToJava.toJava(cat);
@@ -305,7 +305,7 @@ pub mod InteropLocale.Locale {
         let Locale.Locale(x1) = x;
         unsafe IO { x1.getScript() }
 
-    pub def getISO3Language(x: Locale): String \ Fail =
+    pub def getISO3Language(x: Locale): String \ Fail[String] =
         try {
             let Locale.Locale(x1) = x;
             unsafe IO { x1.getISO3Language() }
@@ -384,7 +384,7 @@ pub mod InteropLocale.Locale {
         unsafe IO { JLocale.getISOCountries() } |> Array.toList
     }
 
-    pub def getIsoCountriesWithIsoCountryCode(icc: IsoCountryCode): Set[String] \ Fail =
+    pub def getIsoCountriesWithIsoCountryCode(icc: IsoCountryCode): Set[String] \ Fail[String] =
         try {
             let icc1 = ToJava.toJava(icc);
             unsafe IO { JLocale.getISOCountries(icc1) }
@@ -394,7 +394,7 @@ pub mod InteropLocale.Locale {
         }
 
 
-    pub def getIsoLanguages(): List[String] \ IO + Fail =
+    pub def getIsoLanguages(): List[String] \ IO + Fail[String] =
         try {
             region rc {
                 let _ = Array#{} @ rc;
@@ -404,7 +404,7 @@ pub mod InteropLocale.Locale {
             case ex: JException => Fail.report(ex.getMessage())
         }
 
-    pub def getExtension(key: Char, x: Locale): String \ Fail =
+    pub def getExtension(key: Char, x: Locale): String \ Fail[String] =
         try {
             let Locale.Locale(x1) = x;
             let s = unsafe IO { x1.getExtension(key) };
@@ -448,7 +448,7 @@ pub mod InteropLocale.Locale {
         w1
 
     // TODO - shouldn't need to be in IO
-    pub def lookup(priorities: List[LanguageRange], locales: List[Locale]): Option[Locale] \ IO + Fail=
+    pub def lookup(priorities: List[LanguageRange], locales: List[Locale]): Option[Locale] \ IO + Fail[String] =
         try {
             let priorities1 = List.map(unwrapLanguageRange, priorities);
             let javaPriorities: JList[JLanguageRange] = Adaptor.toList(priorities1);
@@ -463,7 +463,7 @@ pub mod InteropLocale.Locale {
         }
 
     // TODO - shouldn't need to be in IO
-    pub def lookupTag(priorities: List[LanguageRange], tags: List[String]): Option[String] \ IO + Fail =
+    pub def lookupTag(priorities: List[LanguageRange], tags: List[String]): Option[String] \ IO + Fail[String] =
         try {
             let priorities1 = List.map(unwrapLanguageRange, priorities);
             let javaPriorities: JList[JLanguageRange] = Adaptor.toList(priorities1);
@@ -476,7 +476,7 @@ pub mod InteropLocale.Locale {
         }
 
 
-    pub def filter(priorities: List[LanguageRange], locales: List[Locale]): List[Locale] \ IO + Fail =
+    pub def filter(priorities: List[LanguageRange], locales: List[Locale]): List[Locale] \ IO + Fail[String] =
         try {
             let priorities1 = List.map(unwrapLanguageRange, priorities);
             let javaPriorities: JList[JLanguageRange] = Adaptor.toList(priorities1);
@@ -494,7 +494,7 @@ pub mod InteropLocale.Locale {
     // TODO - shouldn't need to be in IO
     pub def filterWithFilteringMode(priorities: List[LanguageRange], 
                                     mode: FilteringMode, 
-                                    locales: List[Locale]): List[Locale] \ IO + Fail = 
+                                    locales: List[Locale]): List[Locale] \ IO + Fail[String] = 
         try {
             let priorites1 = List.map(unwrapLanguageRange, priorities);
             let javaPriorities: JList[JLanguageRange] = Adaptor.toList(priorites1);
@@ -510,7 +510,7 @@ pub mod InteropLocale.Locale {
         }
 
     // TODO - shouldn't need to be in IO
-    pub def filterTags(priorities: List[LanguageRange], tags: List[String]): List[String] \ IO + Fail = 
+    pub def filterTags(priorities: List[LanguageRange], tags: List[String]): List[String] \ IO + Fail[String] = 
         try {
             let priorities1 = List.map(unwrapLanguageRange, priorities);
             let javaPriorities: JList[JLanguageRange] = Adaptor.toList(priorities1);
@@ -525,7 +525,7 @@ pub mod InteropLocale.Locale {
     // TODO - shouldn't need to be in IO
     pub def filterTagsWithFilteringMode(priorities: List[LanguageRange], 
                                         mode: FilteringMode, 
-                                        tags: List[String]): List[String] \ IO + Fail = 
+                                        tags: List[String]): List[String] \ IO + Fail[String] = 
         try {
             let priorities1 = List.map(unwrapLanguageRange, priorities);
             let javaPriorities: JList[JLanguageRange] = Adaptor.toList(priorities1);

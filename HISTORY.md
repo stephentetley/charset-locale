@@ -1,3 +1,6 @@
+### v0.18.0
+   Updated to use package mounts and polymorphic fail.
+
 ### v0.17.0
    Constructors now use a "newX" naming scheme and use the `Fail` effect for failure.
    Errors changed from `Result[String, ...]` to using the `Fail` effect.
